@@ -7,6 +7,8 @@
     <Platforms>x64</Platforms>
     <AssemblyName>CB.System</AssemblyName>
     <Version>0.1.0</Version>
+    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
