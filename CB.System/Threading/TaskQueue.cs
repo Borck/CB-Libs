@@ -10,26 +10,27 @@ namespace CB.System.Threading {
 
     private readonly object _lock = new object();
     private Task _pauseTask;
-    private Task _previousTask = new Task( () => { } );
+    private Task _previousTask = new Task(() => { });
 
 
 
     public TaskQueue(CancellationToken cancellationToken, bool paused) {
       _cancellationToken = cancellationToken;
       _pauseTask = _previousTask;
-      if (!paused)
+      if (!paused) {
         Start();
+      }
     }
 
 
 
     public TaskQueue(CancellationToken cancellationToken)
-      : this( cancellationToken, false ) { }
+      : this(cancellationToken, false) { }
 
 
 
     public TaskQueue()
-      : this( CancellationToken.None, false ) { }
+      : this(CancellationToken.None, false) { }
 
 
 
@@ -38,8 +39,8 @@ namespace CB.System.Threading {
 
 
     public void Dispose() {
-      Dispose( true );
-      GC.SuppressFinalize( this );
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
 
 
@@ -87,12 +88,14 @@ namespace CB.System.Threading {
     public void Stop() {
       Task pauseTask;
       lock (_lock) {
-        if (_pauseTask != null)
+        if (_pauseTask != null) {
           return;
+        }
+
         pauseTask = _pauseTask = _previousTask;
       }
 
-      pauseTask.Wait( _cancellationToken );
+      pauseTask.Wait(_cancellationToken);
     }
 
 
@@ -100,8 +103,9 @@ namespace CB.System.Threading {
     protected virtual void Dispose(bool disposing) {
       // If you need thread safety, use a lock around these  
       // operations, as well as in your methods that use the resource.
-      if (Disposed)
+      if (Disposed) {
         return;
+      }
 
       //TODO: stop
       if (disposing) {
@@ -118,7 +122,7 @@ namespace CB.System.Threading {
 
 
     ~TaskQueue() {
-      Dispose( false );
+      Dispose(false);
     }
   }
 }

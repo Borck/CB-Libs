@@ -62,14 +62,14 @@ namespace CB.System.Collections {
 
 
     public BiDictionaryOneToOne(int capacity) {
-      _firstToSecond = new Dictionary<TFirst, TSecond>( capacity );
-      _secondToFirst = new Dictionary<TSecond, TFirst>( capacity );
+      _firstToSecond = new Dictionary<TFirst, TSecond>(capacity);
+      _secondToFirst = new Dictionary<TSecond, TFirst>(capacity);
     }
 
 
 
     public BiDictionaryOneToOne(IDictionary<TFirst, TSecond> dict) {
-      _firstToSecond = new Dictionary<TFirst, TSecond>( dict );
+      _firstToSecond = new Dictionary<TFirst, TSecond>(dict);
       _secondToFirst = _firstToSecond.Swap();
     }
 
@@ -79,8 +79,8 @@ namespace CB.System.Collections {
       IDictionary<TFirst, TSecond> dict,
       IEqualityComparer<TFirst> comparerFirst,
       IEqualityComparer<TSecond> comparerSecond) {
-      _secondToFirst = dict.Swap( comparerSecond );
-      _firstToSecond = new Dictionary<TFirst, TSecond>( dict, comparerFirst );
+      _secondToFirst = dict.Swap(comparerSecond);
+      _firstToSecond = new Dictionary<TFirst, TSecond>(dict, comparerFirst);
     }
 
     #endregion
@@ -90,7 +90,7 @@ namespace CB.System.Collections {
 
     public TSecond this[TFirst key] {
       get => _firstToSecond[key];
-      set => Add( key, value );
+      set => Add(key, value);
     }
 
     #endregion
@@ -106,18 +106,19 @@ namespace CB.System.Collections {
     /// <param name="first"></param>
     /// <param name="second"></param>
     public void Add(TFirst first, TSecond second) {
-      if (_firstToSecond.ContainsKey( first ) ||
-          _secondToFirst.ContainsKey( second ))
-        throw new ArgumentException( "Duplicate first or second" );
+      if (_firstToSecond.ContainsKey(first) ||
+          _secondToFirst.ContainsKey(second)) {
+        throw new ArgumentException("Duplicate first or second");
+      }
 
-      _firstToSecond.Add( first, second );
-      _secondToFirst.Add( second, first );
+      _firstToSecond.Add(first, second);
+      _secondToFirst.Add(second, first);
     }
 
 
 
     public void Add(KeyValuePair<TFirst, TSecond> item) {
-      Add( item.Key, item.Value );
+      Add(item.Key, item.Value);
     }
 
 
@@ -130,11 +131,13 @@ namespace CB.System.Collections {
     /// <param name="second"></param>
     /// <returns>true if successfully added, false if either element are already in the dictionary</returns>
     public bool TryAdd(TFirst first, TSecond second) {
-      if (_firstToSecond.ContainsKey( first ) || _secondToFirst.ContainsKey( second ))
+      if (_firstToSecond.ContainsKey(first) ||
+          _secondToFirst.ContainsKey(second)) {
         return false;
+      }
 
-      _firstToSecond.Add( first, second );
-      _secondToFirst.Add( second, first );
+      _firstToSecond.Add(first, second);
+      _secondToFirst.Add(second, first);
       return true;
     }
 
@@ -149,8 +152,10 @@ namespace CB.System.Collections {
     /// <param name="first">the key to search for</param>
     /// <returns>the value corresponding to first</returns>
     public TSecond Get(TFirst first) {
-      if (!_firstToSecond.TryGetValue( first, out var second ))
-        throw new ArgumentException( nameof(first) );
+      if (!_firstToSecond.TryGetValue(first, out var second)) {
+        throw new ArgumentException(nameof(first));
+      }
+
       return second;
     }
 
@@ -163,8 +168,10 @@ namespace CB.System.Collections {
     /// <param name="second">the key to search for</param>
     /// <returns>the value corresponding to second</returns>
     public TFirst GetFirst(TSecond second) {
-      if (!_secondToFirst.TryGetValue( second, out var first ))
-        throw new ArgumentException( nameof(second) );
+      if (!_secondToFirst.TryGetValue(second, out var first)) {
+        throw new ArgumentException(nameof(second));
+      }
+
       return first;
     }
 
@@ -178,7 +185,7 @@ namespace CB.System.Collections {
     /// <param name="second">the corresponding value</param>
     /// <returns>true if first is in the dictionary, false otherwise</returns>
     public bool TryGetValue(TFirst first, out TSecond second) {
-      return _firstToSecond.TryGetValue( first, out second );
+      return _firstToSecond.TryGetValue(first, out second);
     }
 
 
@@ -191,7 +198,7 @@ namespace CB.System.Collections {
     /// <param name="first">the corresponding value</param>
     /// <returns>true if second is in the dictionary, false otherwise</returns>
     public bool TryGetFirst(TSecond second, out TFirst first) {
-      return _secondToFirst.TryGetValue( second, out first );
+      return _secondToFirst.TryGetValue(second, out first);
     }
 
     #endregion
@@ -199,9 +206,9 @@ namespace CB.System.Collections {
     #region remove
 
     public bool Remove(KeyValuePair<TFirst, TSecond> item) {
-      return _secondToFirst.ContainsKey( item.Value ) &&
-             _firstToSecond.Remove( item.Key ) &&
-             _secondToFirst.Remove( item.Value );
+      return _secondToFirst.ContainsKey(item.Value) &&
+             _firstToSecond.Remove(item.Key) &&
+             _secondToFirst.Remove(item.Value);
     }
 
 
@@ -212,11 +219,12 @@ namespace CB.System.Collections {
     /// </summary>
     /// <param name="first">the key of the record to delete</param>
     public bool Remove(TFirst first) {
-      if (!_firstToSecond.TryGetValue( first, out var second ))
+      if (!_firstToSecond.TryGetValue(first, out var second)) {
         return false;
+      }
 
-      _firstToSecond.Remove( first );
-      _secondToFirst.Remove( second );
+      _firstToSecond.Remove(first);
+      _secondToFirst.Remove(second);
       return true;
     }
 
@@ -228,9 +236,9 @@ namespace CB.System.Collections {
     /// </summary>
     /// <param name="second">the key of the record to delete</param>
     public bool RemoveBySecond(TSecond second) {
-      return _secondToFirst.TryGetValue( second, out var first ) &&
-             _firstToSecond.Remove( first ) &&
-             _secondToFirst.Remove( second );
+      return _secondToFirst.TryGetValue(second, out var first) &&
+             _firstToSecond.Remove(first) &&
+             _secondToFirst.Remove(second);
     }
 
     #endregion
@@ -238,20 +246,20 @@ namespace CB.System.Collections {
     #region methods: contains
 
     public bool Contains(KeyValuePair<TFirst, TSecond> item) {
-      return _firstToSecond.ContainsKey( item.Key ) &&
-             _firstToSecond.ContainsValue( item.Value );
+      return _firstToSecond.ContainsKey(item.Key) &&
+             _firstToSecond.ContainsValue(item.Value);
     }
 
 
 
     public bool ContainsKey(TFirst first) {
-      return _firstToSecond.ContainsKey( first );
+      return _firstToSecond.ContainsKey(first);
     }
 
 
 
     public bool ContainsKeySecond(TSecond second) {
-      return _secondToFirst.ContainsKey( second );
+      return _secondToFirst.ContainsKey(second);
     }
 
     #endregion
@@ -271,13 +279,13 @@ namespace CB.System.Collections {
     #region methods: CopyTo
 
     public void CopyTo(KeyValuePair<TFirst, TSecond>[] array, int arrayIndex) {
-      ( _firstToSecond as IDictionary<TFirst, TSecond> ).CopyTo( array, arrayIndex );
+      (_firstToSecond as IDictionary<TFirst, TSecond>).CopyTo(array, arrayIndex);
     }
 
 
 
     public void CopyTo(Array array, int index) {
-      ( _firstToSecond as ICollection ).CopyTo( array, index );
+      (_firstToSecond as ICollection).CopyTo(array, index);
     }
 
     #endregion
@@ -300,8 +308,8 @@ namespace CB.System.Collections {
     #region methods: Equals, GetHashCode
 
     public override bool Equals(object obj) {
-      return GetType().IsInstanceOfType( obj ) &&
-             _firstToSecond.Equals( ( obj as BiDictionaryOneToOne<TFirst, TSecond> )?._firstToSecond );
+      return GetType().IsInstanceOfType(obj) &&
+             _firstToSecond.Equals((obj as BiDictionaryOneToOne<TFirst, TSecond>)?._firstToSecond);
     }
 
 
@@ -315,8 +323,8 @@ namespace CB.System.Collections {
     #region methods: ToString
 
     public override string ToString() {
-      return new ToStringBuilder<BiDictionaryOneToOne<TFirst, TSecond>>( this )
-             .Append( dict => dict._firstToSecond.ToString() )
+      return new ToStringBuilder<BiDictionaryOneToOne<TFirst, TSecond>>(this)
+             .Append(dict => dict._firstToSecond.ToString())
              .ToString();
     }
 

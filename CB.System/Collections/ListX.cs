@@ -6,15 +6,17 @@ using System.Collections.Generic;
 namespace CB.System.Collections {
   public static class ListX {
     public static void AddRange<T>(this IList<T> list, IEnumerable<T> items) {
-      foreach (var item in items)
-        list.Add( item );
+      foreach (var item in items) {
+        list.Add(item);
+      }
     }
 
 
 
     public static void RemoveRange<T>(this IList<T> collection, int index, int count) {
-      for (var i = index + count - 1; i >= index; i--)
-        collection.RemoveAt( i );
+      for (var i = index + count - 1; i >= index; i--) {
+        collection.RemoveAt(i);
+      }
     }
 
 
@@ -31,11 +33,14 @@ namespace CB.System.Collections {
       var oldSize = collection.Count;
       var difference = newSize - oldSize;
 
-      if (difference > 0)
-        for (var i = oldSize; i < newSize; i++)
-          collection.Add( newEntry() );
-      else if (difference < 0)
-        collection.RemoveRange( oldSize, difference );
+      if (difference > 0) {
+        for (var i = oldSize; i < newSize; i++) {
+          collection.Add(newEntry());
+        }
+      } else if (difference < 0) {
+        collection.RemoveRange(oldSize, difference);
+      }
+
       return difference;
     }
 
@@ -49,17 +54,21 @@ namespace CB.System.Collections {
     public static T[] Redim1D<T>(this List<T[]> array) {
       // TODO: test it!
       var length = 0;
-      foreach (var part in array)
-        if (part != null)
+      foreach (var part in array) {
+        if (part != null) {
           length += part.Length;
+        }
+      }
 
       var result = new T[length];
 
       var pos = 0;
       foreach (var part in array) {
-        if (part == null)
+        if (part == null) {
           continue;
-        Array.Copy( part, 0, result, pos, part.Length );
+        }
+
+        Array.Copy(part, 0, result, pos, part.Length);
         pos += part.Length;
       }
 

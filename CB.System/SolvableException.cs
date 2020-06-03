@@ -6,7 +6,7 @@ using System.Security.Permissions;
 
 namespace CB.System {
   /// <summary>
-  ///   Represents a exception with brings up the solution to solve the source of this problem.
+  ///   Represents a exception which brings up the solution to solve the source of this problem.
   /// </summary>
   [Serializable]
   public class SolvableException : Exception {
@@ -21,14 +21,14 @@ namespace CB.System {
 
 
     public SolvableException(string message, Func<bool> solution)
-      : base( message ) {
+      : base(message) {
       _solution = solution;
     }
 
 
 
     public SolvableException(string message, Exception inner, Func<bool> solution)
-      : base( message, inner ) {
+      : base(message, inner) {
       _solution = solution;
     }
 
@@ -38,7 +38,7 @@ namespace CB.System {
       SerializationInfo info,
       StreamingContext context,
       Func<bool> solution)
-      : base( info, context ) {
+      : base(info, context) {
       _solution = solution;
     }
 
@@ -50,24 +50,25 @@ namespace CB.System {
     // and
     //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
     //
-
     public bool Solved { get; private set; }
 
 
 
     public bool Solve() {
-      return Solved || ( Solved = _solution() );
+      return Solved || (Solved = _solution());
     }
 
 
 
-    [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
     public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-      base.GetObjectData( info, context );
-      if (info == null)
-        throw new ArgumentNullException( nameof(info) );
-      info.AddValue( nameof(Solved), Solved );
-      info.AddValue( "Solution", _solution.ToString() );
+      base.GetObjectData(info, context);
+      if (info == null) {
+        throw new ArgumentNullException(nameof(info));
+      }
+
+      info.AddValue(nameof(Solved), Solved);
+      info.AddValue("Solution", _solution.ToString());
     }
   }
 }

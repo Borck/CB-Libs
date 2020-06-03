@@ -19,11 +19,13 @@ namespace CB.System.Collections {
 
     public static IEnumerable<TResult> SelectWhile<TResult>(this IEnumerable<TResult> enumerable,
                                                             Predicate<TResult> predicate) {
-      foreach (var item in enumerable)
-        if (predicate( item ))
+      foreach (var item in enumerable) {
+        if (predicate(item)) {
           yield return item;
-        else
+        } else {
           yield break;
+        }
+      }
     }
   }
 }

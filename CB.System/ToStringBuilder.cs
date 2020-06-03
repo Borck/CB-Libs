@@ -22,16 +22,17 @@ namespace CB.System {
 
 
     public ToStringBuilder<T> Append<TProperty>(Expression<Func<T, TProperty>> expression) {
-      if (!TryGetPropertyName( expression, out var propertyName ))
+      if (!TryGetPropertyName(expression, out var propertyName)) {
         throw new ArgumentException(
           "Expression must be a simple property expression."
         );
+      }
 
       var func = expression.Compile();
 
       var commaNeeded = _innerSb.Length >= 1;
       _innerSb.Append(
-        ( commaNeeded ? ", " : "" ) + propertyName + ": " + func( _obj )
+        (commaNeeded ? ", " : "") + propertyName + ": " + func(_obj)
       );
       return this;
     }
@@ -42,8 +43,9 @@ namespace CB.System {
                                                       out string propertyName) {
       propertyName = default(string);
 
-      if (!( expression.Body is MemberExpression propertyExpression ))
+      if (!(expression.Body is MemberExpression propertyExpression)) {
         return false;
+      }
 
       propertyName = propertyExpression.Member.Name;
       return true;
