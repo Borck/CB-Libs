@@ -4,11 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>CB.System.Runtime.Serialization covers a collection of different implementations of the IFormatter interface.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Platforms>x64;AnyCPU</Platforms>
     <AssemblyName>CB.System.Runtime.Serialization</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <PackageIcon>icon.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
