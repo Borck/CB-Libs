@@ -1,0 +1,12 @@
+root = true
+
+[*.*]
+command = Edit.FormatDocument
+allowed_extensions = .*
+denied_extensions = .cs .js .html
+
+
+#[*.{cs,json}]
+[*.cs]
+command = Resharper.Edit.ReSharper_SilentCleanupCode
+allowed_extensions = .*
