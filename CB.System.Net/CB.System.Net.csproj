@@ -15,6 +15,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <PackageTags>system util helper utility utilities collection network tcp ip mac extensions</PackageTags>
+    <Authors>Christian Borck</Authors>
+    <Product>CB-Libs</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -23,8 +27,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CB.System" Version="0.1.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
+    <PackageReference Include="CB.System" Version="0.1.1" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="SharpPcap.Standard" Version="4.4.0">
       <ExcludeAssets>contentFiles</ExcludeAssets>
     </PackageReference>

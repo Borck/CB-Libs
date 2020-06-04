@@ -15,6 +15,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <PackageTags>system formatter serialization protobuf protobuffer</PackageTags>
+    <Authors>Christian Borck</Authors>
+    <Product>CB-Libs</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
@@ -25,8 +29,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CB.System" Version="0.1.0" />
-    <PackageReference Include="protobuf-net" Version="2.4.0" />
+    <PackageReference Include="CB.System" Version="0.1.1" />
+    <PackageReference Include="protobuf-net" Version="2.4.6" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\images\icon.png" Pack="true" PackagePath="\">
