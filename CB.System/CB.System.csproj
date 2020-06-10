@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>CB.System</RootNamespace>
     <Configurations>Debug;Release</Configurations>
     <Description>CB.System is a collection of common classes to solve frequently occurring problems.</Description>
@@ -9,7 +9,7 @@
     <RepositoryUrl></RepositoryUrl>
     <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System</AssemblyName>
-    <Version>0.1.1</Version>
+    <Version>0.1.2-Preview1</Version>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <PropertyGroup>
