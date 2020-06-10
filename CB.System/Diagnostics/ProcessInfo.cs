@@ -3,7 +3,8 @@ using System.Diagnostics;
 
 
 
-namespace CB.Util.System.Win {
+namespace CB.System.Diagnostics {
+  [Obsolete("use System.Diagnostics.Process.GetProcessById() to get more information")]
   public class ProcessInfo {
     public enum States {
       Running,
