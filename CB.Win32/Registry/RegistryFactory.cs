@@ -47,6 +47,14 @@ namespace CB.Win32.Registry {
 
 
 
+      public static RegistryKey OpenDefaultIconKey(string driveName) {
+        return OpenDefaultIconKey(driveName, RegistryHive.CurrentUser) ??
+               OpenDefaultIconKey(driveName, RegistryHive.LocalMachine) ??
+               OpenDefaultIconKey();
+      }
+
+
+
       // public void WriteDriveIconName(string drivePath, string iconPath) {
       //   var regKeyPath = GetDriveClassPath(drivePath) + SUBKEY_SEP + SUBKEY_DEFAULTICON;
       //   Key.CreateSubKey(regKeyPath)
