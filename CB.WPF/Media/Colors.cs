@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 
 
-namespace CB.Win32.Media {
+namespace CB.WPF.Media {
   static class Colors {
     private static readonly Regex RegexColor = new Regex("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", RegexOptions.Compiled);
     private static readonly ColorConverter Converter = new ColorConverter();
