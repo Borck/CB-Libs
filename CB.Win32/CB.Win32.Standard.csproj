@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>CB.Win32</RootNamespace>
+    <builtdir>bin.standard</builtdir>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**\*.core.*</DefaultItemExcludes>
+    <Description>The CB.Win32.Standard project provides an more confortable way to access the Windows API. It is a reduced version of the CB.Win32 project to support .Net Standard and .Net Framework.</Description>
+    <Version>0.1.2</Version>
+    <Authors>Christian Borck</Authors>
+    <Product>CB-Libs</Product>
+    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>system util helper utility utilities collection collections concurrent concurrency extensions</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <!-- <ItemGroup> -->
+  <!--   <CSFile Include="*.cs" Exclude="Shortcuts.core.cs"/> -->
+  <!--   ~1~ <Compile Remove="Shortcuts.core.cs" /> @1@ -->
+  <!--   <EmbeddedResource Remove="Shortcuts.core.cs" /> -->
+  <!--   <None Remove="Shortcuts.core.cs" /> -->
+  <!--   <Content Update="Shortcuts.core.cs" CopyToPublishDirectory="Never" /> -->
+  <!-- </ItemGroup> -->
+  <ItemGroup>
+    <PackageReference Include="CB.System" Version="0.1.1" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\images\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+</Project>
