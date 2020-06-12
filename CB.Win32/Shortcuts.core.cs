@@ -8,6 +8,9 @@ using IWshRuntimeLibrary;
 
 namespace CB.Win32 {
   public static class Shortcuts {
+    //TODO add .Net Standard support
+    //see: https://stackoverflow.com/questions/234231/creating-application-shortcut-in-a-directory
+
     public const string EXTENSION = ".lnk";
     private const string FILE_PATTERN_SHORTCUT = "*" + EXTENSION;
 
