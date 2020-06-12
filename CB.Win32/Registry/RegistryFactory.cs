@@ -12,11 +12,14 @@ namespace CB.Win32.Registry {
 
     public static class Drive {
       public static string GetClassRoot(RegistryHive hive) {
-        return hive switch {
-          RegistryHive.CurrentUser => @"Software\Classes\Applications\Explorer.exe\Drives",
-          RegistryHive.LocalMachine => @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DriveIcons",
-          _ => throw new ArgumentOutOfRangeException()
-        };
+        switch (hive) {
+          case RegistryHive.CurrentUser:
+            return @"Software\Classes\Applications\Explorer.exe\Drives";
+          case RegistryHive.LocalMachine:
+            return @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DriveIcons";
+          default:
+            throw new ArgumentOutOfRangeException();
+        }
       }
 
 
