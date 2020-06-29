@@ -37,7 +37,7 @@ namespace CB.Win32.Registry {
 
 
       public static RegistryKey CreateDefaultIconKey(string driveName, RegistryHive hive) {
-        var keyName = GetClassPath(driveName, hive);
+        var keyName = GetClassPath(driveName, hive) + SUBKEY_SEP + SUBKEY_DEFAULTICON;
         return RegistryKey.OpenBaseKey(hive, RegistryView.Default).CreateSubKey(keyName);
       }
 
