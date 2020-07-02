@@ -2,7 +2,6 @@
 using System.Text;
 using CB.System;
 using CB.Win32.Native;
-using CB.Win32.Native.Structures;
 using JetBrains.Annotations;
 
 
@@ -42,20 +41,11 @@ namespace CB.Win32 {
     /// <param name="id"></param>
     /// <returns></returns>
     public static string GetStringFromResource(string resource, int id) {
-      var sb = new StringBuilder(2048);
-      var hMod = Kernel32.LoadLibraryEx(
-        resource,
-        IntPtr.Zero,
-        LoadLibraryExFlags.DontResolveDllReferences | LoadLibraryExFlags.LoadLibraryAsDatafile
-      );
-
-      var res = User32.LoadString(hMod, id, sb, sb.Capacity) == 0
-                  ? sb.ToString()
-                  : default;
-
-      Kernel32.FreeLibrary(hMod);
-
-      return res;
+      var lib = Kernel32.LoadLibrary(resource);
+      var result = new StringBuilder(2048);
+      User32.LoadString(lib, id, result, result.Capacity);
+      Kernel32.FreeLibrary(lib);
+      return result.ToString();
     }
   }
 }
