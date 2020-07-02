@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 
 
@@ -50,5 +51,10 @@ namespace CB.Win32.Native {
                                                  out IntPtr iconId,
                                                  int numberIcons,
                                                  IntPtr flags);
+
+
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern int LoadString(IntPtr hInstance, int id, StringBuilder lpBuffer, int nBufferMax);
   }
 }
