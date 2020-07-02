@@ -7,10 +7,11 @@ using System.Linq;
 namespace CB.System.Collections {
   public static class EnumerableX {
     public static bool TryGetFirst<TResult>(this IEnumerable<TResult> enumerable, out TResult value) {
-      using var enumerator = enumerable.GetEnumerator();
-      if (enumerator.MoveNext()) {
-        value = enumerator.Current;
-        return true;
+      using (var enumerator = enumerable.GetEnumerator()) {
+        if (enumerator.MoveNext()) {
+          value = enumerator.Current;
+          return true;
+        }
       }
 
       value = default;
@@ -54,29 +55,31 @@ namespace CB.System.Collections {
 
 
     public static IEnumerable<(T left, T right)> AsTuples<T>(this IEnumerable<T> enumerable) {
-      using var eTor = enumerable.GetEnumerator();
-      while (eTor.MoveNext()) {
-        var left = eTor.Current;
-        yield return eTor.MoveNext()
-                       ? (left, eTor.Current)
-                       : throw new ArgumentException("Enumerable length is not times of two");
+      using (var eTor = enumerable.GetEnumerator()) {
+        while (eTor.MoveNext()) {
+          var left = eTor.Current;
+          yield return eTor.MoveNext()
+                         ? (left, eTor.Current)
+                         : throw new ArgumentException("Enumerable length is not times of two");
+        }
       }
     }
 
 
 
     public static IEnumerable<(T left, T middle, T right)> AsTriples<T>(this IEnumerable<T> enumerable) {
-      using var eTor = enumerable.GetEnumerator();
-      while (eTor.MoveNext()) {
-        var left = eTor.Current;
-        if (!eTor.MoveNext()) {
-          throw new ArgumentException("Enumerable length is not times of three");
-        }
+      using (var eTor = enumerable.GetEnumerator()) {
+        while (eTor.MoveNext()) {
+          var left = eTor.Current;
+          if (!eTor.MoveNext()) {
+            throw new ArgumentException("Enumerable length is not times of three");
+          }
 
-        var middle = eTor.Current;
-        yield return eTor.MoveNext()
-                       ? (left, middle, eTor.Current)
-                       : throw new ArgumentException("Enumerable length is not times of three");
+          var middle = eTor.Current;
+          yield return eTor.MoveNext()
+                         ? (left, middle, eTor.Current)
+                         : throw new ArgumentException("Enumerable length is not times of three");
+        }
       }
     }
   }
