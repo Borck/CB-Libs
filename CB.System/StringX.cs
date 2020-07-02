@@ -6,40 +6,71 @@ using JetBrains.Annotations;
 namespace CB.System {
   public static class StringX {
     public static (string left, string right) Separate([NotNull] this string @string, params char[] separators) {
-      return @string.Separate(@string.IndexOfAny(separators));
+      return @string.Separate(@string.IndexOfAny(separators), 1);
+    }
+
+
+
+    public static (string left, string right) Separate([NotNull] this string @string, string separator) {
+      return @string.Separate(@string.IndexOf(separator), separator.Length);
+    }
+
+
+
+    public static (string left, string right) Separate([NotNull] this string @string,
+                                                       string separator,
+                                                       StringComparison comparisonType) {
+      return @string.Separate(@string.IndexOf(separator, comparisonType), separator.Length);
     }
 
 
 
     public static (string left, string right) Separate([NotNull] this string @string, char separator) {
-      return @string.Separate(@string.IndexOf(separator));
+      return @string.Separate(@string.IndexOf(separator), 1);
     }
 
 
 
     public static (string left, string right) SeparateLast([NotNull] this string @string, params char[] separators) {
-      return @string.Separate(@string.LastIndexOfAny(separators));
+      return @string.Separate(@string.LastIndexOfAny(separators), 1);
     }
 
 
 
     public static (string left, string right) SeparateLast([NotNull] this string @string, char separator) {
-      return @string.Separate(@string.LastIndexOf(separator));
+      return @string.Separate(@string.LastIndexOf(separator), 1);
     }
 
 
 
-    private static (string left, string right) Separate([NotNull] this string @string, int indexOfSeparator) {
+    public static (string left, string right) SeparateLast([NotNull] this string @string, string separator) {
+      return @string.Separate(@string.LastIndexOf(separator), separator.Length);
+    }
+
+
+
+    public static (string left, string right) SeparateLast([NotNull] this string @string,
+                                                           string separator,
+                                                           StringComparison comparisonType) {
+      return @string.Separate(@string.LastIndexOf(separator, comparisonType), separator.Length);
+    }
+
+
+
+    private static (string left, string right) Separate([NotNull] this string @string,
+                                                        int indexOfSeparator,
+                                                        int lengthOfSeparator) {
       switch (indexOfSeparator) {
         case -1:
           return (@string, default);
         case 0:
           return (string.Empty, @string);
         default:
+          var endIndexOfSepExcl = indexOfSeparator + lengthOfSeparator;
           return (
                    @string.Substring(0, indexOfSeparator),
-                   @string.Length != indexOfSeparator + 1
-                     ? @string.Substring(indexOfSeparator + 1)
+                   @string.Length != endIndexOfSepExcl
+                     ? @string.Substring(endIndexOfSepExcl)
                      : string.Empty);
       }
     }
