@@ -2,12 +2,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 
 
-namespace CB.WPF.Media {
-  [Obsolete("Use CB.WPF.Drawing.BitmapX instead")]
+namespace CB.WPF.Drawing {
   public static class BitmapX {
     [DllImport("gdi32.dll")]
     private static extern bool DeleteObject(IntPtr hObject);
@@ -19,7 +20,18 @@ namespace CB.WPF.Media {
     /// </summary>
     /// <param name="bitmap"></param>
     /// <returns></returns>
-    public static BitmapSource CreateBitmapSource([NotNull] this Bitmap bitmap)
-      => Drawing.BitmapX.CreateBitmapSource(bitmap);
+    public static BitmapSource CreateBitmapSource([NotNull] this Bitmap bitmap) {
+      var hBitmap = bitmap.GetHbitmap();
+      try {
+        return Imaging.CreateBitmapSourceFromHBitmap(
+          hBitmap,
+          IntPtr.Zero,
+          Int32Rect.Empty,
+          BitmapSizeOptions.FromEmptyOptions()
+        );
+      } finally {
+        DeleteObject(hBitmap);
+      }
+    }
   }
 }

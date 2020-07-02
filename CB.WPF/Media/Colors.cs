@@ -1,24 +1,16 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Text.RegularExpressions;
 
 
 
 namespace CB.WPF.Media {
-  static class Colors {
-    private static readonly Regex RegexColor = new Regex("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", RegexOptions.Compiled);
-    private static readonly ColorConverter Converter = new ColorConverter();
+  [Obsolete("Use CB.WPF.Drawing.Colors instead")]
+  public static class Colors {
+    public static bool IsHexColor(string colorString) => Drawing.Colors.IsHexColor(colorString);
 
 
 
-    public static bool IsHexColor(string colorString) {
-      return RegexColor.IsMatch(colorString);
-    }
-
-
-
-    public static Color Parse([NotNull] string colorString) {
-      return (Color)Converter.ConvertFromString(colorString);
-    }
+    public static Color Parse([NotNull] string colorString) => Drawing.Colors.Parse(colorString);
   }
 }
