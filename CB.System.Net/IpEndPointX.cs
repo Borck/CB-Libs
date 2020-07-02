@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 
@@ -16,7 +17,7 @@ namespace CB.System.Net {
     /// <param name="string"></param>
     /// <returns></returns>
     public static IPEndPoint ParseIpEndPoint(string @string) {
-      if (!@string.TryTail( PORT_SEPARATOR, out var addressStr, out var portStr )) {
+      if (!@string.TrySeparateLast( PORT_SEPARATOR, out var addressStr, out var portStr )) {
         throw new FormatException( "Invalid IP endpoint format" );
       }
 
@@ -40,27 +41,29 @@ namespace CB.System.Net {
     /// <param name="endPoint">the output IPEndPoint</param>
     /// <returns>true if parseable, otherwise false</returns>
     public static bool TryParse(string @string, out IPEndPoint endPoint) {
-      if (@string.TryTail( PORT_SEPARATOR, out var addressStr, out var portStr ) &&
+      if (@string.TrySeparateLast( PORT_SEPARATOR, out var addressStr, out var portStr ) &&
           int.TryParse( portStr, out var port ) &&
           IPAddress.TryParse( addressStr, out var address )) {
         endPoint = new IPEndPoint( address, port );
         return true;
       }
 
-      endPoint = default(IPEndPoint);
+      endPoint = default;
       return false;
     }
 
 
 
-    private static int ParsePort(string[] endPointTokens) {
+    private static int ParsePort(IReadOnlyList<string> endPointTokens) {
       if (int.TryParse(
-        endPointTokens[endPointTokens.Length - 1],
+        endPointTokens[endPointTokens.Count - 1],
         NumberStyles.None,
         NumberFormatInfo.CurrentInfo,
         out var port
-      ))
+      )) {
         return port;
+      }
+
       throw new FormatException( "Invalid port" );
     }
   }
