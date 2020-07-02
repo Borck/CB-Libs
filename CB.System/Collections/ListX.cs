@@ -6,10 +6,20 @@ using System.Collections.Generic;
 namespace CB.System.Collections {
   public static class ListX {
     public static void AddRange<T>(this IList<T> list, IEnumerable<T> items) {
+      if (list is List<T> concreteList) {
+        concreteList.AddRange(items);
+        return;
+      }
+
       foreach (var item in items) {
         list.Add(item);
       }
     }
+
+
+
+    public static void AddRange<T>(this List<T> list, params T[] items)
+      => list.AddRange(items);
 
 
 
