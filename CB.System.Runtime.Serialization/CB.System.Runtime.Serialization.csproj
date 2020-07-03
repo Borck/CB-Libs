@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Platforms>x64;AnyCPU</Platforms>
     <AssemblyName>CB.System.Runtime.Serialization</AssemblyName>
-    <Version>0.1.3-a</Version>
+    <Version>0.1.4-a</Version>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <PropertyGroup>
@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CB.System" Version="0.1.3-a" />
+    <PackageReference Include="CB.System" Version="0.1.4-a" />
     <PackageReference Include="protobuf-net" Version="3.0.13" />
   </ItemGroup>
   <ItemGroup>
