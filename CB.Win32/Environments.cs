@@ -14,12 +14,18 @@ namespace CB.Win32 {
     /// <param name="resource">resource file or comma separated string of resource file and string index</param>
     /// <returns></returns>
     public static string GetLocalizedName([NotNull] string resource) {
-      var (file, idString) = resource.SeparateLast(',');
-      file = Environment.ExpandEnvironmentVariables(file);
-      var id = idString != default
-                 ? Math.Abs(int.Parse(idString))
-                 : 0;
-      return GetStringFromResource(file, id);
+      if (resource.StartsWith('@')) {
+        resource = resource.Length > 1
+                     ? resource.Substring(1)
+                     : string.Empty;
+      }
+
+      var (file, id) = resource.SeparateLast(
+        ",-",
+        idString => Math.Abs(int.Parse(idString)),
+        StringComparison.InvariantCulture
+      );
+      return GetLocalizedName(file, id);
     }
 
 
@@ -30,7 +36,10 @@ namespace CB.Win32 {
     /// <param name="resource">resource file</param>
     /// <param name="id"></param>
     /// <returns></returns>
-    public static string GetLocalizedName(string resource, int id) => GetStringFromResource(resource, id);
+    public static string GetLocalizedName(string resource, int id) => GetStringFromResource(
+      Environment.ExpandEnvironmentVariables(resource),
+      id
+    );
 
 
 
