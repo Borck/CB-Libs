@@ -115,6 +115,15 @@ namespace CB.System {
 
     public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
                                                          string separator,
+                                                         StringComparison comparisonType,
+                                                         Func<string, T> parseRight)
+      => DoParseRightIfNotDefault(@string.SeparateLast(separator, comparisonType), parseRight);
+
+
+
+    [Obsolete("Use SeparateLast(string, string, StringComparison, Func<string, T>) instead")]
+    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+                                                         string separator,
                                                          Func<string, T> parseRight,
                                                          StringComparison comparisonType)
       => DoParseRightIfNotDefault(@string.SeparateLast(separator, comparisonType), parseRight);
