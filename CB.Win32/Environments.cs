@@ -14,7 +14,14 @@ namespace CB.Win32 {
     /// <param name="resource">resource file or comma separated string of resource file and string index</param>
     /// <returns></returns>
     public static string GetLocalizedName([NotNull] string resource) {
-      if (resource.StartsWith('@')) {
+      if (resource.StartsWith(
+#if NETSTANDARD
+        "@"
+#endif
+#if NETCOREAPP
+        '@'
+#endif
+      )) {
         resource = resource.Length > 1
                      ? resource.Substring(1)
                      : string.Empty;
