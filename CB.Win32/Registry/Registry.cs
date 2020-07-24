@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using CB.System;
 using Microsoft.Win32;
 using static Microsoft.Win32.Registry;
 
@@ -11,7 +12,7 @@ namespace CB.Win32.Registry {
     #region constants
 
     private const string DEF_SEP = "\\";
-    private static readonly char DEF_SEPC = DEF_SEP[0];
+    public static readonly char PathSeparator = DEF_SEP[0];
     internal const string HKCR = "HKEY_CLASSES_ROOT";
     internal const string HKCR2 = "HKCR";
     internal const string HKCU = "HKEY_CURRENT_USER";
@@ -42,12 +43,14 @@ namespace CB.Win32.Registry {
 
     #region Parsing
 
-    private static (RegistryHive Hive, RegistryKey Key, string ShortName) DoCutHive(ref string regPath) {
+    internal static (RegistryHive Hive, RegistryKey Key, string ShortName) DoCutHive(ref string regPath) {
       regPath = CleanPathStart(regPath);
-      var hiveStr = CutHead(ref regPath, DEF_SEPC);
-      if (!Str2Hive.TryGetValue(hiveStr, out var entry))
-        throw new ArgumentException(@"No registry hive found", nameof(hiveStr));
-      return entry;
+      string hiveStr;
+
+      (hiveStr, regPath) = regPath.Separate(PathSeparator);
+      return Str2Hive.TryGetValue(hiveStr, out var entry)
+               ? entry
+               : (default, default, default);
     }
 
 
@@ -57,17 +60,6 @@ namespace CB.Win32.Registry {
      */
     public static string CutHiveString(ref string regPath) {
       return DoCutHive(ref regPath).Key.Name;
-    }
-
-
-
-    private static string CutHead(ref string text, char separator) {
-      var i = text?.IndexOf(separator) ?? 0;
-      var result = i != -1
-                     ? text?.Substring(0, i)
-                     : text;
-      text = i + 1 < text?.Length ? text?.Substring(i + 1) : "";
-      return result;
     }
 
 
@@ -120,10 +112,8 @@ namespace CB.Win32.Registry {
 
     #region extensions
 
-    public static string GetShortName(this RegistryKey key) {
-      var regPath = key.Name;
-      return DoCutHive(ref regPath).ShortName + DEF_SEP + regPath;
-    }
+    [Obsolete("Use RegistryKeyX.GetShortenedName instead")]
+    public static string GetShortName(this RegistryKey key) => key.GetShortenedName();
 
     #endregion
   }
