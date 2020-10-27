@@ -20,11 +20,7 @@ namespace CB.System.Net.Diagnostics {
 
 
 
-    public NetMonitor(string pcapFilter = "") { }
-
-
-
-    public NetMonitor(PcapFilterBuilder filterBuilder) {
+    public NetMonitor(string pcapFilter = "") {
       _captureDevices = Task.Factory.StartNew(
         () => {
           try {
@@ -33,7 +29,7 @@ namespace CB.System.Net.Diagnostics {
               captureDevice.Open();
               captureDevice.OnPacketArrival += OnPacketReceived;
               captureDevice.StartCapture();
-              captureDevice.Filter = filterBuilder.ToString();
+              captureDevice.Filter = pcapFilter;
             }
 
             return captureDevices;
@@ -49,8 +45,15 @@ namespace CB.System.Net.Diagnostics {
 
 
 
+    public NetMonitor(PcapFilterBuilder filterBuilder)
+      : this(filterBuilder.ToString()) { }
+
+
+
     public void Start() {
-      _captureDevices.ConfigureAwait( false ).GetAwaiter().GetResult();
+      _captureDevices.ConfigureAwait(false)
+                     .GetAwaiter()
+                     .GetResult();
 
       Started = true;
       _receivedBytes = 0;
@@ -61,9 +64,9 @@ namespace CB.System.Net.Diagnostics {
 
     public void Stop() {
       if (!Started)
-        throw new InvalidOperationException( nameof(NetMonitor) + " is not started." );
+        throw new InvalidOperationException(nameof(NetMonitor) + " is not started.");
 
-      var timeSpan = ( DateTime.Now - _lastStart ).Milliseconds;
+      var timeSpan = (DateTime.Now - _lastStart).Milliseconds;
 
       ReceivedBytes = _receivedBytes;
       BytesPerSecond = timeSpan > 0
