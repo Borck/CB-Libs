@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using CB.System;
 using Microsoft.Win32;
@@ -26,31 +27,41 @@ namespace CB.Win32.Registry {
     internal const string HKDD2 = "HKEY_DYN_DATA";
     private const string REGKEY_IGNORE_PREFIX_COMPUTER = "COMPUTER" + DEF_SEP;
 
-    private static readonly Dictionary<string, (RegistryHive Hive, RegistryKey Key, string ShortName)> Str2Hive =
-      new Dictionary<string, (RegistryHive Hive, RegistryKey Key, string ShortName)>(StringComparer.OrdinalIgnoreCase) {
-        {HKCR, (RegistryHive.ClassesRoot, ClassesRoot, HKCR2)},
-        {HKCR2, (RegistryHive.ClassesRoot, ClassesRoot, HKCR2)},
-        {HKCU, (RegistryHive.CurrentUser, CurrentUser, HKCU2)},
-        {HKCU2, (RegistryHive.CurrentUser, CurrentUser, HKCU2)},
-        {HKLM, (RegistryHive.LocalMachine, LocalMachine, HKLM2)},
-        {HKLM2, (RegistryHive.LocalMachine, LocalMachine, HKLM2)},
-        {HKU, (RegistryHive.Users, Users, HKU)},
-        {HKPD, (RegistryHive.PerformanceData, PerformanceData, HKPD)},
-        {HKCC, (RegistryHive.CurrentConfig, CurrentConfig, HKCC)},
+    private static readonly ICollection<RegistryHiveInfo> HiveInfos =
+      new List<RegistryHiveInfo> {
+        (ClassesRoot, RegistryHive.ClassesRoot, HKCR, HKCR2),
+        (CurrentUser, RegistryHive.CurrentUser, HKCU, HKCU2),
+        (LocalMachine, RegistryHive.LocalMachine, HKLM, HKLM2),
+        (Users, RegistryHive.Users, HKU, default(string)),
+        (PerformanceData, RegistryHive.PerformanceData, HKPD, default(string)),
+        (CurrentConfig, RegistryHive.CurrentConfig, HKCC, default(string))
       };
+
+    private static readonly Dictionary<string, RegistryHiveInfo> Str2Hive;
+
+
+
+    static Registry() {
+      Str2Hive = HiveInfos.SelectMany(
+                            info => info.ShortName != default
+                                      ? new[] {(info.Name, info), (info.ShortName, info)}
+                                      : new[] {(info.Name, info)}
+                          )
+                          .ToDictionary(info => info.Item1, info => info.info);
+    }
 
     #endregion
 
     #region Parsing
 
-    internal static (RegistryHive Hive, RegistryKey Key, string ShortName) DoCutHive(ref string regPath) {
+    internal static RegistryHiveInfo DoCutHive(ref string regPath) {
       regPath = CleanPathStart(regPath);
       string hiveStr;
 
       (hiveStr, regPath) = regPath.Separate(PathSeparator);
       return Str2Hive.TryGetValue(hiveStr, out var entry)
                ? entry
-               : (default, default, default);
+               : default;
     }
 
 
@@ -107,6 +118,52 @@ namespace CB.Win32.Registry {
                : hiveKey.OpenSubKey(regPath);
     }
 
+
+
+    private static bool DoTryGetNormalized<T>(string registryKeyName,
+                                              out T hive,
+                                              out string subKeyName,
+                                              Func<RegistryHiveInfo, T> getHive) {
+      if (registryKeyName.StartsWith(REGKEY_IGNORE_PREFIX_COMPUTER, StringComparison.InvariantCultureIgnoreCase)) {
+        registryKeyName = registryKeyName.Substring(REGKEY_IGNORE_PREFIX_COMPUTER.Length);
+      }
+
+      var hasSubKey = registryKeyName.TrySeparate(PathSeparator, out var hiveName, out var subKeyName2);
+      subKeyName = hasSubKey ? subKeyName2 : default;
+      var hiveFound = Str2Hive.TryGetValue(hiveName, out var hiveInfo);
+      hive = hiveFound ? getHive(hiveInfo) : default;
+      return hiveFound;
+    }
+
+
+
+    public static bool TryGetNormalized(string registryKeyName, out RegistryHive hive, out string subKeyName)
+      => DoTryGetNormalized(registryKeyName, out hive, out subKeyName, hiveInfo => hiveInfo.Hive);
+
+
+
+    public static bool TryGetNormalized(string registryKeyName, out RegistryKey hiveKey, out string subKeyName)
+      => DoTryGetNormalized(registryKeyName, out hiveKey, out subKeyName, hiveInfo => hiveInfo.Key);
+
+
+
+    public static bool TryGetNormalized(string registryKeyName, out string hiveName, out string subKeyName)
+      => DoTryGetNormalized(registryKeyName, out hiveName, out subKeyName, hiveInfo => hiveInfo.Name);
+
+
+    public static RegistryKey OpenRegistryKey(string registryName)
+      => !TryGetNormalized(registryName, out RegistryKey hive, out var subKey)
+           ? default
+           : subKey != default
+             ? hive.OpenSubKey(subKey)
+             : hive;
+
+
+
+    public static bool TryOpenRegistryKey(string registryName, out RegistryKey registryKey) {
+      registryKey = OpenRegistryKey(registryName);
+      return registryKey != default;
+    }
     #endregion
 
 
@@ -116,5 +173,22 @@ namespace CB.Win32.Registry {
     public static string GetShortName(this RegistryKey key) => key.GetShortenedName();
 
     #endregion
+
+
+
+    internal struct RegistryHiveInfo {
+      public RegistryKey Key;
+      public RegistryHive Hive;
+      public string Name;
+      public string ShortName;
+
+
+
+      public static implicit operator RegistryHiveInfo((RegistryKey key,
+                                                         RegistryHive hive,
+                                                         string name,
+                                                         string shortName) infos)
+        => new RegistryHiveInfo() {Key = infos.key, Hive = infos.hive, Name = infos.name, ShortName = infos.shortName};
+    }
   }
 }

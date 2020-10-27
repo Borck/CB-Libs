@@ -5,9 +5,9 @@
     <Description>CB.System.Net is a collection of networking classes to solve frequently occurring problems.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
-    <Platforms>x64;AnyCPU</Platforms>
+    <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System.Net</AssemblyName>
-    <Version>0.1.4-a</Version>
+    <Version>0.2</Version>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <PropertyGroup>
@@ -20,16 +20,13 @@
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CB.System" Version="0.1.4-a" />
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
-    <PackageReference Include="SharpPcap.Standard" Version="4.4.0">
+    <PackageReference Include="CB.System" />
+    <PackageReference Include="JetBrains.Annotations"/>
+    <PackageReference Include="SharpPcap.Standard">
       <ExcludeAssets>contentFiles</ExcludeAssets>
     </PackageReference>
   </ItemGroup>

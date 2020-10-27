@@ -1,0 +1,14 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="CB.System" Version="0.2.0" />
+    <PackageVersion Include="CB.Win32" Version="0.2.0" />
+    <PackageVersion Include="CB.WPF" Version="0.2.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageVersion Include="MahApps.Metro" Version="2.1.1" />
+    <PackageVersion Include="MahApps.Metro.IconPacks" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageVersion Include="protobuf-net" Version="3.0.13" />
+    <PackageVersion Include="SharpPcap.Standard" Version="4.4.0"/>
+    <PackageVersion Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+</Project>

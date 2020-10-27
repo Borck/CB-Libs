@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>CB.Win32</RootNamespace>
+
+    <Version>0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

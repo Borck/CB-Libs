@@ -36,8 +36,8 @@ namespace CB.Win32 {
 
       var (file, id) = resource.SeparateLast(
         ",-",
-        idString => Math.Abs(int.Parse(idString)),
-        StringComparison.InvariantCulture
+        StringComparison.InvariantCulture,
+        idString => Math.Abs(int.Parse(idString))
       );
       return GetLocalizedName(file, id);
     }

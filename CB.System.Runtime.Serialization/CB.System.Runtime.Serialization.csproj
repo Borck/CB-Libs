@@ -5,9 +5,9 @@
     <Description>CB.System.Runtime.Serialization covers a collection of different implementations of the IFormatter interface.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Platforms>x64;AnyCPU</Platforms>
+    <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System.Runtime.Serialization</AssemblyName>
-    <Version>0.1.4-a</Version>
+    <Version>0.2</Version>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <PropertyGroup>
@@ -21,16 +21,16 @@
     <Product>CB-Libs</Product>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CB.System" Version="0.1.4-a" />
-    <PackageReference Include="protobuf-net" Version="3.0.13" />
+    <PackageReference Include="CB.System" />
+    <PackageReference Include="protobuf-net" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\images\icon.png" Pack="true" PackagePath="\">
