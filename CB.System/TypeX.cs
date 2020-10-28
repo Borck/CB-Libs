@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace CB.System {
   public static class TypeX {
+    [Obsolete("Use CB.System.Reflection.MemberInfoX.TryGetCustomAttribute(...) instead")]
     public static bool TryGetCustomAttribute<TAttribute>(
       this Type type,
       bool inherit,
