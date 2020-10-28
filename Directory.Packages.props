@@ -8,6 +8,7 @@
     <PackageVersion Include="MahApps.Metro.IconPacks" Version="4.4.0" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageVersion Include="protobuf-net" Version="3.0.13" />
+    <PackageVersion Include="SharpPcap" Version="5.3.0"/>
     <PackageVersion Include="SharpPcap.Standard" Version="4.4.0"/>
     <PackageVersion Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
