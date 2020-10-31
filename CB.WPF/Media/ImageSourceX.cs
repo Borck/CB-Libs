@@ -10,7 +10,7 @@ using CB.WPF.Windows;
 
 namespace CB.WPF.Drawing {
   public static class ImageSourceX {
-    private static readonly IReadOnlyDictionary<PixelFormat, Func<byte[], Color>> _pixelToColorCreators =
+    private static readonly IReadOnlyDictionary<PixelFormat, Func<byte[], Color>> PixelToColorCreators =
       new Dictionary<PixelFormat, Func<byte[], Color>> {
         {PixelFormats.Bgra32, bytes => Color.FromArgb(bytes[3], bytes[2], bytes[1], bytes[0])},
         {PixelFormats.Bgr32, bytes => Color.FromRgb(bytes[2], bytes[1], bytes[0])},
@@ -26,7 +26,7 @@ namespace CB.WPF.Drawing {
       var rect = new Int32Rect(x, y, 1, 1);
 
       bitmap.CopyPixels(rect, bytes, bytesPerPixel, 0);
-      return _pixelToColorCreators[bitmap.Format]
+      return PixelToColorCreators[bitmap.Format]
         .Invoke(bytes);
     }
 
@@ -35,8 +35,10 @@ namespace CB.WPF.Drawing {
     public static void Save(this BitmapSource bitmap, string filePath) {
       BitmapEncoder encoder = new PngBitmapEncoder();
       encoder.Frames.Add(BitmapFrame.Create(bitmap));
-      using var file = File.OpenWrite(filePath);
-      encoder.Save(file);
+      // ReSharper disable once ConvertToUsingDeclaration
+      using (var file = File.OpenWrite(filePath)) {
+        encoder.Save(file);
+      }
     }
   }
 }
