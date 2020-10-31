@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net471;netstandard2.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <Version>0.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -25,7 +25,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
     <COMReference Include="IWshRuntimeLibrary.dll">
       <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
       <VersionMajor>1</VersionMajor>
@@ -36,6 +36,11 @@
     </COMReference>
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefaultItemExcludes>$(DefaultItemExcludes);**\*.core.*</DefaultItemExcludes>
+    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="CB.System" />
     <PackageReference Include="JetBrains.Annotations" />

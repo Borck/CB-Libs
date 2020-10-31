@@ -20,11 +20,10 @@ namespace CB.Win32 {
     /// <returns></returns>
     public static string GetLocalizedName([NotNull] string resource) {
       if (resource.StartsWith(
-#if NETSTANDARD
-        "@"
-#endif
 #if NETCOREAPP
         '@'
+#else
+        "@"
 #endif
       )) {
         resource = resource.Substring(1);
