@@ -9,6 +9,9 @@
     <AssemblyName>CB.System.Runtime.Serialization</AssemblyName>
     <Version>0.2</Version>
     <PackageIcon>icon.png</PackageIcon>
+    <LangVersion>8</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

@@ -15,6 +15,9 @@
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
     <Description>The CB.WPF project is a set of WPF controls and extensions that can help to accelerate the UI development.</Description>
+    <LangVersion>8</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" />
