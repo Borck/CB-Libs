@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="CB.System" Version="0.2.0" />
     <PackageVersion Include="CB.Win32" Version="0.2.0" />
-    <PackageVersion Include="CB.WPF" Version="0.2.0" />
+    <PackageVersion Include="CB.WPF" Version="0.2.1" />
     <PackageVersion Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageVersion Include="MahApps.Metro" Version="2.1.1" />
     <PackageVersion Include="MahApps.Metro.IconPacks" Version="4.4.0" />
