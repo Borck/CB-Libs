@@ -13,6 +13,7 @@ namespace CB.System {
     private readonly TaskCompletionSource<TEventArgs> _eventArrived = new TaskCompletionSource<TEventArgs>();
 
     private readonly Action<EventHandler<TEventArgs>> _unsubscribe;
+    private readonly Func<object, TEventArgs, bool> _condition;
 
 
 
@@ -23,6 +24,22 @@ namespace CB.System {
     public EventAwaiter(Action<EventHandler<TEventArgs>> subscribe, Action<EventHandler<TEventArgs>> unsubscribe) {
       subscribe(Subscription);
       _unsubscribe = unsubscribe;
+      _condition = (_, __) => true;
+    }
+
+
+
+    /// <summary>
+    /// </summary>
+    /// <param name="subscribe">action to subscribe to a <see cref="EventHandler" /></param>
+    /// <param name="unsubscribe">action to unsubscribe to a <see cref="EventHandler" /></param>
+    /// <param name="condition"></param>
+    public EventAwaiter(Action<EventHandler<TEventArgs>> subscribe,
+                        Action<EventHandler<TEventArgs>> unsubscribe,
+                        Func<object, TEventArgs, bool> condition) {
+      subscribe(Subscription);
+      _unsubscribe = unsubscribe;
+      _condition = condition;
     }
 
 
@@ -30,8 +47,10 @@ namespace CB.System {
     public Task<TEventArgs> Task => _eventArrived.Task;
 
     private EventHandler<TEventArgs> Subscription => (s, e) => {
-                                                       _eventArrived.TrySetResult(e);
-                                                       _unsubscribe(Subscription);
-                                                     };
+      if (_condition.Invoke(s, e)) {
+        _unsubscribe(Subscription);
+        _eventArrived.TrySetResult(e);
+      }
+    };
   }
 }
