@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 
 
 namespace CB.System {
-  [TestFixture]
   public class AppDomainXTests {
-    [Test]
+    [Fact]
     public void GetClassesTest_WithIList() {
-      var classes = AppDomain.CurrentDomain.GetLoadableClasses( typeof(IList) ).ToArray();
-      Assert.IsTrue( classes.Any() );
+      var classes = AppDomain.CurrentDomain.GetLoadableClasses(typeof(IList)).ToArray();
+      Assert.True(classes.Any());
       foreach (var @class in classes) {
-        Assert.IsTrue( typeof(IList).IsAssignableFrom( @class ) );
+        Assert.True(typeof(IList).IsAssignableFrom(@class));
       }
     }
 
 
 
-    [Test]
+    [Fact]
     public void GetClassesTest_WithThisClass() {
-      var classes = AppDomain.CurrentDomain.GetLoadableClasses( typeof(AppDomainXTests) ).ToArray();
-      CollectionAssert.AreEquivalent( classes, new[] {typeof(AppDomainXTests)} );
+      var classes = AppDomain.CurrentDomain.GetLoadableClasses(typeof(AppDomainXTests)).ToArray();
+      Assert.Equal(classes, new[] {typeof(AppDomainXTests)});
     }
   }
 }

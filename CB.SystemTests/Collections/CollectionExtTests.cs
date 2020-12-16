@@ -1,16 +1,15 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 
 
 namespace CB.System.Collections {
-  [TestFixture]
   public class CollectionExtTests {
-    [Test]
+    [Fact]
     public void PrepandTest() {
       var values = new[] {1, 5};
-      var valuesPrepanded = values.Prepand( 8 );
+      var valuesPrepanded = values.Prepand(8);
 
-      CollectionAssert.AreEqual( new[] {8, 1, 5}, valuesPrepanded );
+      Assert.Equal(new[] {8, 1, 5}, valuesPrepanded!);
     }
   }
 }

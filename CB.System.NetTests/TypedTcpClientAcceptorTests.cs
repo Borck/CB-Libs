@@ -2,14 +2,13 @@
 using System.IO;
 using System.Net;
 using CB.System.IO;
-using NUnit.Framework;
+using Xunit;
 
 
 
 namespace CB.System.Net {
-  [TestFixture]
   public class TypedTcpClientAcceptorTests {
-    [Test]
+    [Fact]
     public void TestDispose() {
       using (var tcpAcceptor = new TypedTcpClientAcceptor<object>(new IPAddress(0), 0, new Formatter())) {
         tcpAcceptor.Start();

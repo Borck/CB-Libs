@@ -40,8 +40,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CB.System\CB.System.csproj" />
-  </ItemGroup>
 
 </Project>

@@ -1,37 +1,32 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 
 
 namespace CB.System.Concurrent {
-  [TestFixture]
   public class ObservableRefTests {
-    [Test]
+    [Fact]
     public void TestUpdateFieldValue_ChangeTwiceWithSameValue_ExpectNonChangedValue() {
       var obj = new object();
-      var @ref = new ObservableRef<object> {
-        Value = obj
-      };
+      var @ref = new ObservableRef<object> {Value = obj};
 
-      @ref.ValueChanged += (_, args) => { Assert.IsFalse( args.ValueChanged ); };
+      @ref.ValueChanged += (_, args) => { Assert.False(args.ValueChanged); };
       @ref.Value = obj;
     }
 
 
 
-    [Test]
+    [Fact]
     public void TestUpdateFieldValue_ChangeValue_ExpectValueChanged() {
       var expectedObj = new object();
 
-      var @ref = new ObservableRef<object> {
-        Value = expectedObj
-      };
+      var @ref = new ObservableRef<object> {Value = expectedObj};
 
-      Assert.AreEqual( expectedObj, @ref.Value );
+      Assert.Equal(expectedObj, @ref.Value);
     }
 
 
 
-    [Test]
+    [Fact]
     public void TestUpdateFieldValue_ChangeValue_ExpectValueChangedEvent() {
       var @ref = new ObservableRef<object>();
 
@@ -39,7 +34,7 @@ namespace CB.System.Concurrent {
       @ref.ValueChanged += (_, __) => { eventRaised = true; };
       @ref.Value = new object();
 
-      Assert.IsTrue( eventRaised );
+      Assert.True(eventRaised);
     }
   }
 }

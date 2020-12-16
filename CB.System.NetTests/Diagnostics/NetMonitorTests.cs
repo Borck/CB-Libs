@@ -1,62 +1,74 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
-using NUnit.Framework;
+using System.Threading.Tasks;
+using Xunit;
 
 
 
 namespace CB.System.Net.Diagnostics {
-  [TestFixture]
   public class NetMonitorTests {
     private const string PING_IP = "9.9.9.9";
 
 
 
     private static void Ping(string address)
-      => new Ping().Send( address );
+      => new Ping().Send(address);
 
 
 
-    [Test]
-    [MaxTime( 10000 )]
-    public void DataLengthTest_FilterBuilder_ExpectPacketReceived() {
-      var pingIp = IPAddress.Parse( PING_IP );
+    [Fact(Timeout = 10000)]
+    public async Task DataLengthTest_FilterBuilder_ExpectPacketReceived() {
+      var pingIp = IPAddress.Parse(PING_IP);
       var filterBuilder = new PcapFilterBuilder()
-        .AppendIpDst( pingIp );
+        .AppendIpDst(pingIp);
 
-      var monitor = new NetMonitor( filterBuilder );
-      monitor.Start();
+      var receivedBytes = await new TaskFactory().StartNew(
+                            () => {
+                              var monitor = new NetMonitor(filterBuilder);
+                              monitor.Start();
 
-      Ping( PING_IP );
-      Thread.Sleep( 1000 );
+                              Ping(PING_IP);
+                              Thread.Sleep(1000);
 
-      monitor.Stop();
-      Assert.That( monitor.ReceivedBytes, Is.Positive );
+                              monitor.Stop();
+                              return monitor.ReceivedBytes;
+                            }
+                          );
+
+      Assert.True(receivedBytes > 0);
     }
 
 
 
-    [Test]
-    [MaxTime( 10000 )]
-    public void DataLengthTest_FilterString_ExpectPacketReceived() {
-      var monitor = new NetMonitor( "dst host " + PING_IP );
-      monitor.Start();
+    [Fact(Timeout = 10000)]
+    public async Task DataLengthTest_FilterString_ExpectPacketReceived() {
+      var receivedBytes = await new TaskFactory().StartNew(
+                            () => {
+                              var monitor = new NetMonitor("dst host " + PING_IP);
+                              monitor.Start();
 
-      Ping( PING_IP );
-      Thread.Sleep( 1000 );
+                              Ping(PING_IP);
+                              Thread.Sleep(1000);
 
-      monitor.Stop();
-      Assert.That( monitor.ReceivedBytes, Is.Positive );
+                              monitor.Stop();
+                              return monitor.ReceivedBytes;
+                            }
+                          );
+      Assert.True(receivedBytes > 0);
     }
 
 
 
-    [Test]
-    [MaxTime( 2000 )]
-    public void StartStopTest() {
-      var monitor = new NetMonitor();
-      monitor.Start();
-      monitor.Stop();
+    [Fact(Timeout = 2000)]
+    public async Task StartStopTest() {
+      await new TaskFactory().StartNew(
+        () => {
+          var monitor = new NetMonitor();
+          monitor.Start();
+          monitor.Stop();
+        }
+      );
     }
   }
 }

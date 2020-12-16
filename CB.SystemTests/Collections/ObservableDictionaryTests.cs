@@ -1,20 +1,17 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 
 
 namespace CB.System.Collections {
-  [TestFixture]
   public class ObservableDictionaryTests {
-    [Test]
+    [Fact]
     public void ObservableDictionaryTest() {
       var objExpected = new object();
 
-      var dictionary = new ObservableDictionary<MyKey, object> {
-        {new MyKey( 815 ), objExpected}
-      };
+      var dictionary = new ObservableDictionary<MyKey, object> {{new MyKey(815), objExpected}};
 
-      var obj = dictionary[new MyKey( 815 )];
-      Assert.AreEqual( obj, objExpected );
+      var obj = dictionary[new MyKey(815)];
+      Assert.Equal(obj, objExpected);
     }
 
 
@@ -31,7 +28,7 @@ namespace CB.System.Collections {
 
 
       public override bool Equals(object obj)
-        => Equals( obj as MyKey );
+        => Equals(obj as MyKey);
 
 
 
