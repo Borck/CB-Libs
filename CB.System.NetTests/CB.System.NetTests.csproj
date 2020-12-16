@@ -42,6 +42,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CB.System, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CB.System.0.2.0\lib\netstandard2.0\CB.System.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -99,6 +102,7 @@
     <Compile Include="Helper\NetworkTestHelper.cs" />
     <Compile Include="Helper\TestProtoContract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypedTcpClientAcceptorTests.cs" />
     <Compile Include="TypedTcpClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,16 +111,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CB.System.Net\CB.System.Net.csproj">
-      <Project>{8DA8A189-DB3F-488B-ADDE-9B4534CFE8B3}</Project>
+      <Project>{8da8a189-db3f-488b-adde-9b4534cfe8b3}</Project>
       <Name>CB.System.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\CB.System.Runtime.Serialization\CB.System.Runtime.Serialization.csproj">
       <Project>{E555B11B-B993-4211-9289-B4D8E25F7EB8}</Project>
       <Name>CB.System.Runtime.Serialization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CB.System\CB.System.csproj">
-      <Project>{4C90E145-DF00-4468-A845-E93E8D9262A7}</Project>
-      <Name>CB.System</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

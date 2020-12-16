@@ -2,41 +2,44 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using CB.System.IO;
-using JetBrains.Annotations;
 
 
 
 namespace CB.System.Net {
   public class TypedTcpClientAcceptor<TData> : IDisposable {
     private readonly IFormatter<TData> _serializer;
-    private readonly Thread _clientFetcher;
+    private readonly Task _clientFetcher;
 
-    [NotNull]
     public readonly TcpListener Listener;
 
-    public IPEndPoint LocalEndPoint => (IPEndPoint) Listener.LocalEndpoint;
+    public IPEndPoint LocalEndPoint => (IPEndPoint)Listener.LocalEndpoint;
 
     public bool Started => Listener.Server.IsBound;
 
 
-    public event EventHandler<TypedTcpClient<TData>> ClientAccepted;
+    public event EventHandler<TypedTcpClient<TData>>? ClientAccepted;
+
+    private readonly CancellationTokenSource _cancelSource;
 
 
 
-    public TypedTcpClientAcceptor(IPEndPoint localEp, IFormatter<TData> serializer) {
+    public TypedTcpClientAcceptor(IPEndPoint localEp,
+                                  IFormatter<TData> serializer) {
       _serializer = serializer;
-      Listener = new TcpListener( localEp );
-      _clientFetcher = new Thread( DoFetchClients ) {
-        IsBackground = true,
-        Name = GetType().Name
-      };
+      _cancelSource = new CancellationTokenSource();
+      Listener = new TcpListener(localEp);
+      _clientFetcher = new Task(DoFetchClients, _cancelSource.Token, TaskCreationOptions.LongRunning);
     }
 
 
 
-    public TypedTcpClientAcceptor(IPAddress localaddr, int port, IFormatter<TData> serializer)
-      : this( new IPEndPoint( localaddr, port ), serializer ) { }
+    public TypedTcpClientAcceptor(IPAddress localAddress,
+                                  int port,
+                                  IFormatter<TData> serializer
+    )
+      : this(new IPEndPoint(localAddress, port), serializer) { }
 
 
 
@@ -50,8 +53,8 @@ namespace CB.System.Net {
     private void DoFetchClients() {
       while (Started) {
         var tcpClient = Listener.AcceptTcpClient();
-        var vrClient = new TypedTcpClient<TData>( tcpClient, _serializer );
-        ClientAccepted?.Invoke( this, vrClient );
+        var vrClient = new TypedTcpClient<TData>(tcpClient, _serializer);
+        ClientAccepted?.Invoke(this, vrClient);
       }
     }
 
@@ -59,7 +62,7 @@ namespace CB.System.Net {
 
     public void Dispose() {
       Listener.Stop();
-      _clientFetcher.Abort();
+      _cancelSource.Cancel();
     }
   }
 }
