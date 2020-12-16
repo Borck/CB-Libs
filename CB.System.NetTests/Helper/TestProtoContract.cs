@@ -23,22 +23,32 @@ namespace CB.System.Net.Helper {
 
 
     public bool Equals(TestProtoContract other) {
-      if (ReferenceEquals(null, other))
+      if (ReferenceEquals(null, other)) {
         return false;
-      if (ReferenceEquals(this, other))
+      }
+
+      if (ReferenceEquals(this, other)) {
         return true;
+      }
+
       return IntValue == other.IntValue && Equals(Child, other.Child);
     }
 
 
 
     public override bool Equals(object obj) {
-      if (ReferenceEquals(this, obj))
+      if (ReferenceEquals(this, obj)) {
         return true;
-      if (ReferenceEquals(null, obj))
+      }
+
+      if (ReferenceEquals(null, obj)) {
         return false;
-      if (obj.GetType() != GetType())
+      }
+
+      if (obj.GetType() != GetType()) {
         return false;
+      }
+
       return Equals((TestProtoContract)obj);
     }
 
