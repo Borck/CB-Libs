@@ -1,6 +1,6 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="CB.System" Version="0.2.0" />
+    <PackageVersion Include="CB.System" Version="0.2.2" />
     <PackageVersion Include="CB.System.Runtime.Serialization" Version="0.2.0" />
     <PackageVersion Include="CB.Win32" Version="0.2.0" />
     <PackageVersion Include="CB.WPF" Version="0.2.1" />

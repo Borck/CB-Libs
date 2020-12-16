@@ -9,7 +9,7 @@
     <RepositoryUrl></RepositoryUrl>
     <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System</AssemblyName>
-    <Version>0.2</Version>
+    <Version>0.2.2</Version>
     <PackageIcon>icon.png</PackageIcon>
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -31,7 +31,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\images\icon.png" Pack="true" PackagePath="\">

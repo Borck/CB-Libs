@@ -1,17 +1,16 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 
 
 namespace CB.System {
   public static class StringX {
-    public static (string left, string right) Separate([NotNull] this string @string, char separator) {
+    public static (string left, string right) Separate(this string @string, char separator) {
       return @string.Separate(@string.IndexOf(separator), 1);
     }
 
 
 
-    public static (T left, string right) Separate<T>([NotNull] this string @string,
+    public static (T left, string right) Separate<T>(this string @string,
                                                      char separator,
                                                      Func<string, T> parseLeft) {
       var (left, right) = Separate(@string, separator);
@@ -20,13 +19,13 @@ namespace CB.System {
 
 
 
-    public static (string left, string right) Separate([NotNull] this string @string, params char[] separators) {
+    public static (string left, string right) Separate(this string @string, params char[] separators) {
       return @string.Separate(@string.IndexOfAny(separators), 1);
     }
 
 
 
-    public static (T left, string right) Separate<T>([NotNull] this string @string,
+    public static (T left, string right) Separate<T>(this string @string,
                                                      char[] separators,
                                                      Func<string, T> parseLeft) {
       var (left, right) = Separate(@string, separators);
@@ -35,13 +34,13 @@ namespace CB.System {
 
 
 
-    public static (string left, string right) Separate([NotNull] this string @string, string separator) {
+    public static (string left, string right) Separate(this string @string, string separator) {
       return @string.Separate(@string.IndexOf(separator), separator.Length);
     }
 
 
 
-    public static (T left, string right) Separate<T>([NotNull] this string @string,
+    public static (T left, string right) Separate<T>(this string @string,
                                                      string separator,
                                                      Func<string, T> parseLeft) {
       var (left, right) = Separate(@string, separator);
@@ -50,7 +49,7 @@ namespace CB.System {
 
 
 
-    public static (string left, string right) Separate([NotNull] this string @string,
+    public static (string left, string right) Separate(this string @string,
                                                        string separator,
                                                        StringComparison comparisonType) {
       return @string.Separate(@string.IndexOf(separator, comparisonType), separator.Length);
@@ -58,7 +57,7 @@ namespace CB.System {
 
 
 
-    public static (T left, string right) Separate<T>([NotNull] this string @string,
+    public static (T left, string right) Separate<T>(this string @string,
                                                      string separator,
                                                      StringComparison comparisonType,
                                                      Func<string, T> parseLeft) {
@@ -68,52 +67,52 @@ namespace CB.System {
 
 
 
-    public static (string left, string right) SeparateLast([NotNull] this string @string, char separator) {
+    public static (string left, string right) SeparateLast(this string @string, char separator) {
       return @string.Separate(@string.LastIndexOf(separator), 1);
     }
 
 
 
-    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+    public static (string left, T right) SeparateLast<T>(this string @string,
                                                          char separator,
                                                          Func<string, T> parseRight)
       => DoParseRightIfNotDefault(@string.SeparateLast(separator), parseRight);
 
 
 
-    public static (string left, string right) SeparateLast([NotNull] this string @string, params char[] separators) {
+    public static (string left, string right) SeparateLast(this string @string, params char[] separators) {
       return @string.Separate(@string.LastIndexOfAny(separators), 1);
     }
 
 
 
-    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+    public static (string left, T right) SeparateLast<T>(this string @string,
                                                          char[] separators,
                                                          Func<string, T> parseRight)
       => DoParseRightIfNotDefault(@string.SeparateLast(separators), parseRight);
 
 
 
-    public static (string left, string right) SeparateLast([NotNull] this string @string, string separator)
+    public static (string left, string right) SeparateLast(this string @string, string separator)
       => @string.Separate(@string.LastIndexOf(separator), separator.Length);
 
 
 
-    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+    public static (string left, T right) SeparateLast<T>(this string @string,
                                                          string separator,
                                                          Func<string, T> parseRight)
       => DoParseRightIfNotDefault(@string.SeparateLast(separator), parseRight);
 
 
 
-    public static (string left, string right) SeparateLast([NotNull] this string @string,
+    public static (string left, string right) SeparateLast(this string @string,
                                                            string separator,
                                                            StringComparison comparisonType)
       => @string.Separate(@string.LastIndexOf(separator, comparisonType), separator.Length);
 
 
 
-    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+    public static (string left, T right) SeparateLast<T>(this string @string,
                                                          string separator,
                                                          StringComparison comparisonType,
                                                          Func<string, T> parseRight)
@@ -122,7 +121,7 @@ namespace CB.System {
 
 
     [Obsolete("Use SeparateLast(string, string, StringComparison, Func<string, T>) instead")]
-    public static (string left, T right) SeparateLast<T>([NotNull] this string @string,
+    public static (string left, T right) SeparateLast<T>(this string @string,
                                                          string separator,
                                                          Func<string, T> parseRight,
                                                          StringComparison comparisonType)
@@ -136,7 +135,7 @@ namespace CB.System {
 
 
 
-    private static (string left, string right) Separate([NotNull] this string @string,
+    private static (string left, string right) Separate(this string @string,
                                                         int indexOfSeparator,
                                                         int lengthOfSeparator) {
       switch (indexOfSeparator) {
@@ -155,7 +154,7 @@ namespace CB.System {
 
 
 
-    private static string RightSubstring([NotNull] this string @string,
+    private static string RightSubstring(this string @string,
                                          int indexOfSeparator,
                                          int lengthOfSeparator) {
       var rightStartIndex = indexOfSeparator + lengthOfSeparator;
@@ -166,7 +165,7 @@ namespace CB.System {
 
 
 
-    private static bool TrySeparate([NotNull] this string @string,
+    private static bool TrySeparate(this string @string,
                                     int indexOfSeparator,
                                     int lengthOfSeparator,
                                     out string left,
@@ -189,7 +188,7 @@ namespace CB.System {
 
 
 
-    private static bool TrySeparateParseLeft<T>([NotNull] this string @string,
+    private static bool TrySeparateParseLeft<T>(this string @string,
                                                 int indexOfSeparator,
                                                 int lengthOfSeparator,
                                                 out T left,
@@ -207,7 +206,7 @@ namespace CB.System {
 
 
 
-    private static bool TrySeparateParseRight<T>([NotNull] this string @string,
+    private static bool TrySeparateParseRight<T>(this string @string,
                                                  int indexOfSeparator,
                                                  int lengthOfSeparator,
                                                  out string left,
@@ -312,7 +311,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast([NotNull] this string @string,
+    public static bool TrySeparateLast(this string @string,
                                        char separator,
                                        out string left,
                                        out string right)
@@ -320,7 +319,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast<T>([NotNull] this string @string,
+    public static bool TrySeparateLast<T>(this string @string,
                                           char separator,
                                           out string left,
                                           out T right,
@@ -329,7 +328,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast([NotNull] this string @string,
+    public static bool TrySeparateLast(this string @string,
                                        char[] separators,
                                        out string left,
                                        out string right)
@@ -337,7 +336,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast<T>([NotNull] this string @string,
+    public static bool TrySeparateLast<T>(this string @string,
                                           char[] separators,
                                           out string left,
                                           out T right,
@@ -346,7 +345,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast([NotNull] this string @string,
+    public static bool TrySeparateLast(this string @string,
                                        string separator,
                                        out string left,
                                        out string right)
@@ -354,7 +353,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast<T>([NotNull] this string @string,
+    public static bool TrySeparateLast<T>(this string @string,
                                           string separator,
                                           out string left,
                                           out T right,
@@ -363,7 +362,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast([NotNull] this string @string,
+    public static bool TrySeparateLast(this string @string,
                                        string separator,
                                        StringComparison comparisonType,
                                        out string left,
@@ -372,7 +371,7 @@ namespace CB.System {
 
 
 
-    public static bool TrySeparateLast<T>([NotNull] this string @string,
+    public static bool TrySeparateLast<T>(this string @string,
                                           string separator,
                                           StringComparison comparisonType,
                                           out string left,
@@ -389,7 +388,7 @@ namespace CB.System {
 
 
     [Obsolete("Use TrySeparateLast instead")]
-    public static bool TryTail([NotNull] this string @string, char separator, out string head, out string tail)
+    public static bool TryTail(this string @string, char separator, out string head, out string tail)
       => TrySeparateLast(@string, separator, out head, out tail);
   }
 }

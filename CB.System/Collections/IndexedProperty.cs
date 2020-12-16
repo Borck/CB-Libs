@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 
 
@@ -11,8 +10,8 @@ namespace CB.System.Collections {
 
 
     public IndexedProperty(
-      [NotNull] Func<TIndex, TValue> getter,
-      [NotNull] Action<TIndex, TValue> setter) {
+      Func<TIndex, TValue> getter,
+      Action<TIndex, TValue> setter) {
       _getter = getter;
       _setter = setter;
     }
@@ -20,8 +19,8 @@ namespace CB.System.Collections {
 
 
     public TValue this[TIndex index] {
-      get => _getter( index );
-      set => _setter( index, value );
+      get => _getter(index);
+      set => _setter(index, value);
     }
   }
 }

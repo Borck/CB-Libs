@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 
 
@@ -12,12 +11,12 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream)
-      : base( stream ) { }
+    public IndexedStreamReader(Stream stream)
+      : base(stream) { }
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream, bool detectEncodingFromByteOrderMarks)
+    public IndexedStreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)
       : base(
         stream,
         detectEncodingFromByteOrderMarks
@@ -25,13 +24,13 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream, [NotNull] Encoding encoding)
-      : base( stream, encoding ) { }
+    public IndexedStreamReader(Stream stream, Encoding encoding)
+      : base(stream, encoding) { }
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream,
-                               [NotNull] Encoding encoding,
+    public IndexedStreamReader(Stream stream,
+                               Encoding encoding,
                                bool detectEncodingFromByteOrderMarks)
       : base(
         stream,
@@ -41,8 +40,8 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream,
-                               [NotNull] Encoding encoding,
+    public IndexedStreamReader(Stream stream,
+                               Encoding encoding,
                                bool detectEncodingFromByteOrderMarks,
                                int bufferSize)
       : base(
@@ -54,8 +53,8 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] Stream stream,
-                               [NotNull] Encoding encoding,
+    public IndexedStreamReader(Stream stream,
+                               Encoding encoding,
                                bool detectEncodingFromByteOrderMarks,
                                int bufferSize,
                                bool leaveOpen)
@@ -69,12 +68,12 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] string path)
-      : base( path ) { }
+    public IndexedStreamReader(string path)
+      : base(path) { }
 
 
 
-    public IndexedStreamReader([NotNull] string path, bool detectEncodingFromByteOrderMarks)
+    public IndexedStreamReader(string path, bool detectEncodingFromByteOrderMarks)
       : base(
         path,
         detectEncodingFromByteOrderMarks
@@ -82,13 +81,13 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] string path, [NotNull] Encoding encoding)
-      : base( path, encoding ) { }
+    public IndexedStreamReader(string path, Encoding encoding)
+      : base(path, encoding) { }
 
 
 
-    public IndexedStreamReader([NotNull] string path,
-                               [NotNull] Encoding encoding,
+    public IndexedStreamReader(string path,
+                               Encoding encoding,
                                bool detectEncodingFromByteOrderMarks)
       : base(
         path,
@@ -98,8 +97,8 @@ namespace CB.System.IO {
 
 
 
-    public IndexedStreamReader([NotNull] string path,
-                               [NotNull] Encoding encoding,
+    public IndexedStreamReader(string path,
+                               Encoding encoding,
                                bool detectEncodingFromByteOrderMarks,
                                int bufferSize)
       : base(

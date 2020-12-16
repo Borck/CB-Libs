@@ -3,14 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using JetBrains.Annotations;
 
 
 
 namespace CB.System.Net {
   public static class NetInfo {
-    [NotNull]
     public static IPAddress[] GetLocalIpAddresses() {
       var strHostName = Dns.GetHostName();
       return Dns.GetHostAddresses(strHostName);
@@ -34,47 +31,46 @@ namespace CB.System.Net {
 
 
 
-    [CanBeNull]
-    public static PhysicalAddress GetPhysicalAddress([NotNull] IPAddress ipAddress) {
-      try {
-        var arpStream = Execute("arp", "-a " + ipAddress);
+    [Obsolete("Use TryGetPhysicalAddress")]
+    public static PhysicalAddress GetPhysicalAddress(IPAddress ipAddress) {
+      return TryGetPhysicalAddress(ipAddress, out var macAddress)
+               ? macAddress!
+               : default!;
+    }
 
-        // Consume first three lines
-        arpStream.ReadLine();
-        arpStream.ReadLine();
-        arpStream.ReadLine();
 
-        // Read entries
-        while (!arpStream.EndOfStream) {
-          var line = arpStream.ReadLine();
-          var tokens = line?.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-          if (tokens?.Length != 3)
-            continue;
+    public static bool TryGetPhysicalAddress(IPAddress ipAddress, out PhysicalAddress? address) {
+      var arpStream = Execute("arp", "-a " + ipAddress);
 
-          var mac = tokens[1];
-          return PhysicalAddress.Parse(mac);
+      // Consume first three lines
+      arpStream.ReadLine();
+      arpStream.ReadLine();
+      arpStream.ReadLine();
+
+      // Read entries
+      while (!arpStream.EndOfStream) {
+        var line = arpStream.ReadLine();
+        var tokens = line?.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+        if (tokens?.Length != 3) {
+          continue;
         }
-      } catch (Exception e) {
-        Console.Error.WriteLine(e);
+
+        var mac = tokens[1];
+        address = PhysicalAddress.Parse(mac);
+        return true;
       }
 
-      return null;
+      address = default;
+      return false;
     }
 
 
 
-    [CanBeNull]
-    public static string GetHostName([NotNull] IPAddress ipAddress) {
-      try {
-        return Dns
-               .GetHostEntry(ipAddress)
-               .HostName;
-      } catch (SocketException e) {
-        Console.Error.WriteLine(e);
-      }
-
-      return null;
-    }
+    public static string GetHostName(IPAddress ipAddress)
+      => Dns
+         .GetHostEntry(ipAddress)
+         .HostName;
   }
 }
