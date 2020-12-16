@@ -39,7 +39,7 @@ namespace CB.System.Collections {
     [Fact]
     public void GetFirstTest_Exists_Pass() {
       var dict = new BiDictionaryOneToOne<int, int> {{0, 815},};
-      Assert.Equal(dict.GetFirst(815), 0);
+      Assert.Equal(0, dict.GetFirst(815));
     }
 
 
@@ -56,7 +56,7 @@ namespace CB.System.Collections {
     [Fact]
     public void GetTest_Exists_Pass() {
       var dict = new BiDictionaryOneToOne<int, int> {{0, 815},};
-      Assert.Equal(dict.Get(0), 815);
+      Assert.Equal(815, dict.Get(0));
     }
 
 
@@ -73,10 +73,9 @@ namespace CB.System.Collections {
 
     [Fact]
     public void TestTest() {
-      var dictionary = new Dictionary<int, int>() {{4, 3}};
-      var result = dictionary.TryGetValue(6574, out var value);
+      var dictionary = new Dictionary<int, int> {{4, 3}};
+      var result = dictionary.TryGetValue(6574, out _);
       Assert.False(result);
-      Console.WriteLine(value);
     }
 
 
@@ -101,7 +100,7 @@ namespace CB.System.Collections {
     public void TryGetFirstTest_Exists_Pass() {
       var dict = new BiDictionaryOneToOne<int, int> {{0, 815},};
       Assert.True(dict.TryGetFirst(815, out var first));
-      Assert.Equal(first, 0);
+      Assert.Equal(0, first);
     }
 
 
@@ -118,7 +117,7 @@ namespace CB.System.Collections {
     public void TryGetValueTest_Exists_Pass() {
       var dict = new BiDictionaryOneToOne<int, int> {{0, 815},};
       Assert.True(dict.TryGetValue(0, out var second));
-      Assert.Equal(second, 815);
+      Assert.Equal(815, second);
     }
 
 
@@ -126,7 +125,7 @@ namespace CB.System.Collections {
     [Fact]
     public void TryGetValueTest_Missing_Pass() {
       var dict = new BiDictionaryOneToOne<int, int> {{0, 815},};
-      Assert.False(dict.TryGetValue(42, out var unused));
+      Assert.False(dict.TryGetValue(42, out _));
     }
   }
 }
