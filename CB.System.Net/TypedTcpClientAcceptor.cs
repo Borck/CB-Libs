@@ -8,6 +8,7 @@ using CB.System.IO;
 
 
 namespace CB.System.Net {
+  [Obsolete("Use TypedTcpClient instead")]
   public class TypedTcpClientAcceptor<TData> : IDisposable {
     private readonly IFormatter<TData> _serializer;
     private readonly Task _clientFetcher;
