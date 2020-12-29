@@ -30,7 +30,7 @@ namespace CB.System.Net {
       _serializer = serializer;
       _cancelSource = new CancellationTokenSource();
       Listener = new TcpListener(localEp);
-      _clientFetcher = new Task(DoFetchClients, _cancelSource.Token, TaskCreationOptions.LongRunning);
+      _clientFetcher = new Task(DoFetchClients, _cancelSource.Token);
     }
 
 
@@ -50,19 +50,25 @@ namespace CB.System.Net {
 
 
 
-    private void DoFetchClients() {
-      while (Started) {
-        var tcpClient = Listener.AcceptTcpClient();
-        var vrClient = new TypedTcpClient<TData>(tcpClient, _serializer);
-        ClientAccepted?.Invoke(this, vrClient);
+    private async void DoFetchClients() {
+      try {
+        while (Started) {
+          var tcpClient = await Task.Run(() => Listener.AcceptTcpClientAsync(), _cancelSource.Token);
+          var vrClient = new TypedTcpClient<TData>(tcpClient, _serializer);
+          ClientAccepted?.Invoke(this, vrClient);
+        }
+      } finally {
+        Listener.Stop();
       }
+
+      _cancelSource.Cancel();
     }
 
 
 
     public void Dispose() {
-      Listener.Stop();
       _cancelSource.Cancel();
+      _cancelSource.Dispose();
     }
   }
 }
