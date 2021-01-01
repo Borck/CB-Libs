@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using CB.System.IO;
 
 
@@ -42,9 +43,23 @@ namespace CB.System.Net {
 
 
 
-    public void Connect(IPEndPoint sensorServerEp) {
-      Client.Connect(sensorServerEp);
-    }
+    public void Connect(IPEndPoint endPoint)
+      => Client.Connect(endPoint);
+
+
+
+    public void Connect(IPAddress address, int port)
+      => Client.Connect(address, port);
+
+
+
+    public Task ConnectAsync(IPEndPoint endPoint)
+      => Client.ConnectAsync(endPoint.Address, endPoint.Port);
+
+
+
+    public Task ConnectAsync(IPAddress address, int port)
+      => Client.ConnectAsync(address, port);
 
 
 
