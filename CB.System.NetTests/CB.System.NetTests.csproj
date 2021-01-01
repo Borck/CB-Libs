@@ -10,11 +10,10 @@
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
+    <Version>0.2.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CB.System" />
-    <PackageReference Include="CB.System.Runtime.Serialization" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
@@ -30,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CB.System.Net\CB.System.Net.csproj" />
+    <ProjectReference Include="..\CB.System.Runtime.Serialization\CB.System.Runtime.Serialization.csproj" />
   </ItemGroup>
 
 </Project>

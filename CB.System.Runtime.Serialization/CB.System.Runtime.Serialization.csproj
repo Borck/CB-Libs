@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System.Runtime.Serialization</AssemblyName>
-    <Version>0.2</Version>
+    <Version>0.2.3.0</Version>
     <PackageIcon>icon.png</PackageIcon>
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>

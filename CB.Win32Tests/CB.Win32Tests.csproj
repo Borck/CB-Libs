@@ -10,6 +10,7 @@
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
+    <Version>0.2.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
