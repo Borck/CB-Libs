@@ -8,6 +8,7 @@ namespace CB.System {
   /// <summary>
   ///   Represents a exception which brings up the solution to solve the source of this problem.
   /// </summary>
+  [Obsolete("Their is no replacement, because this kind is not a real exception and should be prevented.")]
   [Serializable]
   public class SolvableException : Exception {
     private readonly Func<bool> _solution;
