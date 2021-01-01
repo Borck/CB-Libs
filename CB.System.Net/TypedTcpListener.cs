@@ -48,9 +48,7 @@ namespace CB.System.Net {
 
 
 
-    public async Task<TypedTcpClient<TData>> AcceptTcpClientAsync() {
-      var client = await Listener.AcceptTcpClientAsync();
-      return new TypedTcpClient<TData>(client, _serializer);
-    }
+    public async Task<TypedTcpClient<TData>> AcceptTcpClientAsync() =>
+      new TypedTcpClient<TData>(await Listener.AcceptTcpClientAsync(), _serializer);
   }
 }
