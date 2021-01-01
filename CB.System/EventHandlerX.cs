@@ -28,19 +28,19 @@ namespace CB.System {
 
 
     /// <summary>
-    ///   Subscribes an EventHandle and invokes that delegate asynchronous.
+    ///   Subscribes an EventHandler and invokes that delegate asynchronous.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="eventHandler"></param>
     /// <param name="sender"></param>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public static Task InvokeAsync<T>(this EventHandler<T> eventHandler, object sender, T arg) {
-      return Task.Factory.FromAsync(
+    public static Task InvokeAsync<T>(this EventHandler<T> eventHandler, object sender, T arg)
+      => Task.Factory.FromAsync(
         (asyncCallback, @object) => eventHandler.BeginInvoke(sender, arg, asyncCallback, @object),
         eventHandler.EndInvoke,
         null
       );
-    }
+    
   }
 }
