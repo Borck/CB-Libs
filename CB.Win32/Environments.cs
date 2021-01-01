@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace CB.Win32 {
   public static class Environments {
-    private const string localizedNameImmutablePostfix = "#immutable1";
+    private const string LOCALIZED_NAME_IMMUTABLE_POSTFIX = "#immutable1";
 
 
 
@@ -29,8 +29,8 @@ namespace CB.Win32 {
         resource = resource.Substring(1);
       }
 
-      if (resource.EndsWith(localizedNameImmutablePostfix)) {
-        resource = resource.Substring(0, resource.Length - localizedNameImmutablePostfix.Length);
+      if (resource.EndsWith(LOCALIZED_NAME_IMMUTABLE_POSTFIX)) {
+        resource = resource.Substring(0, resource.Length - LOCALIZED_NAME_IMMUTABLE_POSTFIX.Length);
       }
 
       var (file, id) = resource.SeparateLast(
