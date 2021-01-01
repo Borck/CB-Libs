@@ -47,12 +47,10 @@ namespace CB.System.Net {
 
 
 
-    [Obsolete("Use TryGetPhysicalAddress")]
-    public static PhysicalAddress GetPhysicalAddress(IPAddress ipAddress) {
-      return TryGetPhysicalAddress(ipAddress, out var macAddress)
-               ? macAddress!
-               : default!;
-    }
+    public static PhysicalAddress? GetPhysicalAddress(IPAddress ipAddress)
+      => TryGetPhysicalAddress(ipAddress, out var macAddress)
+           ? macAddress!
+           : default;
 
 
 
