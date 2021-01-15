@@ -397,5 +397,86 @@ namespace CB.System.Collections {
 
       return array;
     }
+
+
+
+    /// <summary>
+    ///   Keeps only the values in the <see cref="array" /> which results to true by the <see cref="predicate" />. The
+    ///   <see cref="array" />
+    ///   will have shrunk by the number of removed values.
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="predicate"></param>
+    public static void Crop<T>(ref T[] array, Predicate<T> predicate) {
+      var inputBytes = array;
+
+      bool MoveNextKeep(ref int i) {
+        i++;
+        for (; i < inputBytes.Length; i++) {
+          if (predicate(inputBytes[i])) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      bool MoveNextRemove(ref int i, out int length) {
+        var iStart = i;
+        i++;
+        for (; i < inputBytes.Length; i++) {
+          if (!predicate(inputBytes[i])) {
+            length = i - iStart;
+            return true;
+          }
+        }
+
+        length = i - iStart;
+        return false;
+      }
+
+      void Copy(int iSource, int iDestination, int length) {
+        Buffer.BlockCopy(inputBytes, iSource, inputBytes, iDestination, length);
+      }
+
+      var i = -1;
+
+      int iSrc,
+          iDst;
+      if (!MoveNextKeep(ref i)) {
+        return;
+      }
+
+      if (i > 0) {
+        // array starts with zeros -> first copy
+        iSrc = i;
+        var endOfArray = !MoveNextRemove(ref i, out iDst);
+        Copy(iSrc, 0, iDst);
+        if (endOfArray) {
+          Array.Resize(ref array, iDst);
+          return;
+        }
+      } else {
+        // array starts with non zeros
+        if (!MoveNextRemove(ref i, out var firstBlockLength)) {
+          // no zeros found
+          return;
+        }
+
+        iDst = firstBlockLength;
+      }
+
+      while (MoveNextKeep(ref i)) {
+        iSrc = i;
+        var endOfArray = !MoveNextRemove(ref i, out var copyLength);
+        Copy(iSrc, iDst, copyLength);
+        iDst += copyLength;
+        if (endOfArray) {
+          break;
+        }
+      }
+
+      Array.Resize(ref array, iDst);
+    }
   }
 }
