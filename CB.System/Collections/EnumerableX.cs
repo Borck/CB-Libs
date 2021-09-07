@@ -6,6 +6,17 @@ using System.Linq;
 
 namespace CB.System.Collections {
   public static class EnumerableX {
+    /// <summary>Projects each element of a sequence into a new form depending on a TryFunc returning true and a out value.</summary>
+    public static IEnumerable<TOut> SelectWhere<T, TOut>(this IEnumerable<T> enumerable, TryFunc<T, TOut> trySelector) {
+      foreach (var item in enumerable) {
+        if (trySelector(item, out var value)) {
+          yield return value;
+        }
+      }
+    }
+
+
+
     public static bool TryGetFirst<TResult>(this IEnumerable<TResult> enumerable, out TResult value) {
       using (var enumerator = enumerable.GetEnumerator()) {
         if (enumerator.MoveNext()) {
