@@ -21,7 +21,7 @@ namespace CB.System.Collections {
 
 
 
-    [DllImport("kernel32.dll", SetLastError = false)]
+    [DllImport("kernel32.dll", EntryPoint = "RtlCopyMemory", SetLastError = false)]
     private static extern void CopyMemory(IntPtr destination, IntPtr source, UIntPtr length);
 
 
