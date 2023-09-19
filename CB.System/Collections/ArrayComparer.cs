@@ -20,7 +20,7 @@ namespace CB.System.Collections {
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>
     /// <returns>The hash code for the values in the array.</returns>
-    public int GetHashCode(T[] array) {
+    public int GetHashCode(T[]? array) {
       // if null, hash code is zero
       if (array == null)
         return 0;
@@ -30,7 +30,7 @@ namespace CB.System.Collections {
         var hash = 17;
         // get hash code for all items in array
         foreach (var item in array)
-          hash = hash * 23 + ( item != null ? item.GetHashCode() : 0 );
+          hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
         return hash;
       }
     }
@@ -39,14 +39,14 @@ namespace CB.System.Collections {
 
     /// <summary>
     ///   Compares the contents of both arrays to see if they are equal. This depends on
-    ///   typeparameter T having a valid override for Equals().
+    ///   type parameter T having a valid override for Equals().
     /// </summary>
     /// <param name="firstArray">The first array to compare.</param>
     /// <param name="secondArray">The second array to compare.</param>
     /// <returns>True if firstArray and secondArray have equal contents.</returns>
-    public bool Equals(T[] firstArray, T[] secondArray) {
+    public bool Equals(T[]? firstArray, T[]? secondArray) {
       // if same reference or both null, then equality is true
-      return ReferenceEquals( firstArray, secondArray )
+      return ReferenceEquals(firstArray, secondArray)
 
              // otherwise, if both arrays have same length, compare all elements
              ||
@@ -55,7 +55,7 @@ namespace CB.System.Collections {
              firstArray.Length == secondArray.Length
              // if no mismatches, equal
              &&
-             !firstArray.Where( (t, i) => !Equals( t, secondArray[i] ) ).Any();
+             !firstArray.Where((t, i) => !Equals(t, secondArray[i])).Any();
     }
   }
 }
