@@ -1,9 +1,9 @@
-﻿using System;
+﻿using CB.System.IO;
+using CB.System.Runtime.Serialization;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using CB.System.IO;
-using CB.System.Runtime.Serialization;
 
 
 
@@ -14,13 +14,13 @@ namespace CB.System.Net.Helper {
 
 
 
-    public static ITestProtoContract CreateProtoBufTestData()
-      => TestProtoContract.Factory.CreateSample();
+    public static IRecursiveProtoContract CreateProtoBufTestData()
+      => RecursiveProtoContract.Factory.CreateRecursiveSample();
 
 
 
-    public static ITestProtoContract CreateProtoBufTestData(int deep)
-      => TestProtoContract.Factory.CreateSample( deep );
+    public static IRecursiveProtoContract CreateProtoBufTestData(int deep)
+      => RecursiveProtoContract.Factory.CreateRecursiveSample(deep);
 
 
 
@@ -29,7 +29,7 @@ namespace CB.System.Net.Helper {
         case Formatter.ProtoBuf:
           return CreateProtoBufSerializer<T>();
         default:
-          throw new ArgumentOutOfRangeException( nameof(formatter), formatter, null );
+          throw new ArgumentOutOfRangeException(nameof(formatter), formatter, null);
       }
     }
 
@@ -37,33 +37,33 @@ namespace CB.System.Net.Helper {
 
     public static async Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
       ConnectTwoClientsAsync<T>(IPEndPoint localEp, Func<IFormatter<T>> newFormatter) {
-      var listener = new TcpListener( localEp );
+      var listener = new TcpListener(localEp);
       listener.Start();
 
       var taskAcceptClient = Task.Factory.StartNew(
         () => {
           var tcpClient = listener.AcceptTcpClient();
           var serializer = newFormatter.Invoke();
-          return new TypedTcpClient<T>( tcpClient, serializer );
+          return new TypedTcpClient<T>(tcpClient, serializer);
         },
         TaskCreationOptions.LongRunning
       );
 
-      var serverEp = (IPEndPoint) listener.LocalEndpoint;
+      var serverEp = (IPEndPoint)listener.LocalEndpoint;
 
-      var vrClient = new TypedTcpClient<T>( newFormatter.Invoke() );
-      vrClient.Connect( serverEp );
+      var vrClient = new TypedTcpClient<T>(newFormatter.Invoke());
+      vrClient.Connect(serverEp);
 
-      var vrAcceptedClient = await taskAcceptClient.ConfigureAwait( false );
+      var vrAcceptedClient = await taskAcceptClient.ConfigureAwait(false);
 
-      return ( vrClient, vrAcceptedClient );
+      return (vrClient, vrAcceptedClient);
     }
 
 
 
     public static Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
       ConnectTwoClientsAsync<T>(IPEndPoint localEp, Formatter formatter = Formatter.ProtoBuf) {
-      return ConnectTwoClientsAsync( localEp, () => CreatePredefinedFormatter<T>( formatter ) );
+      return ConnectTwoClientsAsync(localEp, () => CreatePredefinedFormatter<T>(formatter));
     }
 
 
@@ -77,8 +77,8 @@ namespace CB.System.Net.Helper {
     public static Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
       ConnectTwoClientsAsync<T>(Formatter formatter = Formatter.ProtoBuf) {
       return ConnectTwoClientsAsync(
-        new IPEndPoint( IPAddress.Loopback, 0 ),
-        () => CreatePredefinedFormatter<T>( formatter )
+        new IPEndPoint(IPAddress.Loopback, 0),
+        () => CreatePredefinedFormatter<T>(formatter)
       );
     }
 

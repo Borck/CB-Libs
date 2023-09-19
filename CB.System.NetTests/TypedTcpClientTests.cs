@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using CB.System.Net.Helper;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using CB.System.Net.Helper;
 using Xunit;
 
 
@@ -36,7 +36,8 @@ namespace CB.System.Net {
 
       try {
         Assert.True(vrAcceptedClient.Connected);
-      } finally {
+      }
+      finally {
         vrClient.Dispose();
         vrAcceptedClient.Dispose();
       }
@@ -55,7 +56,8 @@ namespace CB.System.Net {
         try {
           Assert.True(vrClient.Connected);
           Assert.True(vrAcceptedClient.Connected);
-        } finally {
+        }
+        finally {
           vrClient.Dispose();
           vrAcceptedClient.Dispose();
         }
@@ -69,14 +71,15 @@ namespace CB.System.Net {
       var dataExpected = NetworkTestHelper.CreateProtoBufTestData();
 
       var (vrClient, vrAcceptedClient) =
-        await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+        await NetworkTestHelper.ConnectTwoClientsAsync<IRecursiveProtoContract>();
 
       try {
         vrClient.Send(dataExpected);
 
         var dataReceived = vrAcceptedClient.Receive();
         Assert.Equal(dataExpected, dataReceived);
-      } finally {
+      }
+      finally {
         vrClient.Dispose();
         vrAcceptedClient.Dispose();
       }
@@ -90,7 +93,7 @@ namespace CB.System.Net {
       var data4Expected = NetworkTestHelper.CreateProtoBufTestData(4);
 
       var (vrClient, vrAcceptedClient) =
-        await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+        await NetworkTestHelper.ConnectTwoClientsAsync<IRecursiveProtoContract>();
 
       try {
         vrClient.Send(data3Expected);
@@ -98,7 +101,8 @@ namespace CB.System.Net {
 
         var data3Received = vrAcceptedClient.Receive();
         Assert.Equal(data3Expected, data3Received);
-      } finally {
+      }
+      finally {
         vrClient.Dispose();
         vrAcceptedClient.Dispose();
       }
@@ -112,7 +116,7 @@ namespace CB.System.Net {
       var data4Expected = NetworkTestHelper.CreateProtoBufTestData(4);
 
       var (vrClient, vrAcceptedClient) =
-        await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+        await NetworkTestHelper.ConnectTwoClientsAsync<IRecursiveProtoContract>();
 
       try {
         vrClient.Send(data3Expected);
@@ -121,7 +125,8 @@ namespace CB.System.Net {
         var unused = vrAcceptedClient.Receive();
         var data4Received = vrAcceptedClient.Receive();
         Assert.Equal(data4Expected, data4Received);
-      } finally {
+      }
+      finally {
         vrClient.Dispose();
         vrAcceptedClient.Dispose();
       }
