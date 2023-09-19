@@ -514,7 +514,7 @@ namespace CB.System.Collections {
 
 
 
-    private static object InitializeJaggedArray(Type type, int index, int[] lengths) {
+    private static object InitializeJaggedArray(Type type, int index, IReadOnlyList<int> lengths) {
       var array = Array.CreateInstance(type, lengths[index]);
       var elementType = type.GetElementType();
       if (elementType == null) {
@@ -530,15 +530,15 @@ namespace CB.System.Collections {
 
 
 
-    private static void InitIndexes(int[] indexes) {
-      for (int i = 0; i < indexes.Length; i++) {
+    private static void InitIndexes(IList<int> indexes) {
+      for (var i = 0; i < indexes.Count; i++) {
         indexes[i] = i;
       }
     }
 
 
 
-    private static void SetIndexes(int[] indexes, int lastIndex, int count) {
+    private static void SetIndexes(IList<int> indexes, int lastIndex, int count) {
       indexes[lastIndex]++;
       if (lastIndex > 0 &&
           indexes[lastIndex] == count) {
@@ -549,19 +549,17 @@ namespace CB.System.Collections {
 
 
 
-    private static List<T> TakeAt<T>(int[] indexes, IEnumerable<T> list) {
-      List<T> selected = new List<T>();
-      for (int i = 0; i < indexes.Length; i++) {
-        selected.Add(list.ElementAt(indexes[i]));
+    private static IEnumerable<T> TakeAt<T>(IEnumerable<T> items, int[] indexes) {
+      var list = items as IList<T> ?? items.ToList();
+      foreach (var i in indexes) {
+        yield return list[i];
       }
-
-      return selected;
     }
 
 
 
     private static bool AllPlacesChecked(int[] indexes, int places) {
-      for (int i = indexes.Length - 1; i >= 0; i--) {
+      for (var i = indexes.Length - 1; i >= 0; i--) {
         if (indexes[i] != places)
           return false;
 
@@ -581,14 +579,14 @@ namespace CB.System.Collections {
     /// <param name="length">tupel length</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IEnumerable<IList<T>> Combine<T>(this IEnumerable<T> collection, int length) {
-      int[] indexes = new int[length];
-      int listCount = collection.Count();
+    public static IEnumerable<IEnumerable<T>> Combine<T>(this IEnumerable<T> collection, int length) {
+      var indexes = new int[length];
+      var listCount = collection.Count();
       if (length > listCount)
         throw new InvalidOperationException($"{nameof(length)} is greater than the collection elements.");
       InitIndexes(indexes);
       do {
-        var selected = TakeAt(indexes, collection);
+        var selected = TakeAt(collection, indexes);
         yield return selected;
         SetIndexes(indexes, indexes.Length - 1, listCount);
       } while (!AllPlacesChecked(indexes, listCount));
