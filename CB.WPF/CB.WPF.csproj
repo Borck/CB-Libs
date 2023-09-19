@@ -10,14 +10,15 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <Copyright>Copyright © 2023 Christian Borck</Copyright>
     <PackageTags>controls colors icons extensions</PackageTags>
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
-    <Description>The CB.WPF project is a set of WPF controls and extensions that can help to accelerate the UI development.</Description>
+    <Description>CB.WPF covers a set of WPF controls and extensions that can help to accelerate UI development.</Description>
     <LangVersion>11</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" />
@@ -30,6 +31,10 @@
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 

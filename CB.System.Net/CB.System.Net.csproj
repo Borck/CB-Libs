@@ -18,10 +18,11 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <Copyright>Copyright © 2023 Christian Borck</Copyright>
     <PackageTags>system util helper utility utilities collection network tcp ip mac extensions</PackageTags>
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +38,10 @@
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

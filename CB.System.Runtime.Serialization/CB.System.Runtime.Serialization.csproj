@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net48;netstandard2.0;net6.0</TargetFrameworks>
-    <Description>CB.System.Runtime.Serialization covers a collection of different implementations of the IFormatter interface.</Description>
+    <Description>CB.System.Runtime.Serialization covers implementations of the IFormatter interface.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Platforms>AnyCPU</Platforms>
@@ -18,10 +18,11 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <Copyright>Copyright © 2023 Christian Borck</Copyright>
     <PackageTags>system formatter serialization protobuf protobuffer</PackageTags>
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -42,6 +43,10 @@
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
 
