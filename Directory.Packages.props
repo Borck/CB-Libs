@@ -1,6 +1,6 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="CB.System" Version="0.2.3" />
+    <PackageVersion Include="CB.System" Version="0.3.0.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="MahApps.Metro" Version="2.1.1" />
     <PackageVersion Include="MahApps.Metro.IconPacks" Version="4.4.0" />
