@@ -4,7 +4,7 @@
     <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net6.0</TargetFrameworks>
     <RootNamespace>CB.System</RootNamespace>
     <Configurations>Debug;Release</Configurations>
-    <Description>CB.System is a collection of common classes to solve frequently occurring problems.</Description>
+    <Description>CB.System is a collection of common classes to solve frequently occurring challenges according to System.*.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <Platforms>AnyCPU</Platforms>
@@ -19,16 +19,21 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageTags>system util helper utility utilities collection collections concurrent concurrency extensions</PackageTags>
-    <Copyright>Copyright © 2020 Christian Borck</Copyright>
+    <Copyright>Copyright © 2023 Christian Borck</Copyright>
     <Product>CB-Libs</Product>
     <Company />
     <Authors>Christian Borck</Authors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\images\icon.png" Pack="true" PackagePath="\">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
