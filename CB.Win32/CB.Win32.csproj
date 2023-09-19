@@ -16,7 +16,7 @@
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
     <Description>The CB.Win32 project provides an more confortable way to access the Windows API.</Description>
-    <LangVersion>8</LangVersion>
+    <LangVersion>11</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
   </PropertyGroup>
