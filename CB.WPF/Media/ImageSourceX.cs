@@ -1,14 +1,14 @@
-﻿using System;
+﻿using CB.WPF.Windows;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using CB.WPF.Windows;
 
 
 
-namespace CB.WPF.Drawing {
+namespace CB.WPF.Media {
   public static class ImageSourceX {
     private static readonly IReadOnlyDictionary<PixelFormat, Func<byte[], Color>> PixelToColorCreators =
       new Dictionary<PixelFormat, Func<byte[], Color>> {
@@ -40,5 +40,22 @@ namespace CB.WPF.Drawing {
         encoder.Save(file);
       }
     }
+  }
+}
+
+
+
+namespace CB.WPF.Drawing {
+
+  [Obsolete("Use CB.WPF.Media.ImageSourceX instead")]
+  public static class ImageSourceX {
+    public static Color GetPixelColor(this BitmapSource bitmap, int x, int y) =>
+      Media.ImageSourceX.GetPixelColor(bitmap, x, y);
+
+
+
+
+    public static void Save(this BitmapSource bitmap, string filePath) =>
+      Media.ImageSourceX.Save(bitmap, filePath);
   }
 }
