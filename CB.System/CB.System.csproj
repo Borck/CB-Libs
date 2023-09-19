@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net48;netcoreapp2.0;netcoreapp3.0;netcoreapp3.1;netstandard2.0;net5.0;net6.0</TargetFrameworks>
     <RootNamespace>CB.System</RootNamespace>
     <Configurations>Debug;Release</Configurations>
     <Description>CB.System is a collection of common classes to solve frequently occurring problems.</Description>
@@ -14,8 +14,6 @@
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -25,13 +23,11 @@
     <Product>CB-Libs</Product>
     <Company />
     <Authors>Christian Borck</Authors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-
-  <ItemGroup>
-  </ItemGroup>
   <ItemGroup>
     <None Include="..\images\icon.png" Pack="true" PackagePath="\">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
