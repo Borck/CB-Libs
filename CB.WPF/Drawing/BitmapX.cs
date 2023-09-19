@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using JetBrains.Annotations;
 
 
 
@@ -20,7 +19,7 @@ namespace CB.WPF.Drawing {
     /// </summary>
     /// <param name="bitmap"></param>
     /// <returns></returns>
-    public static BitmapSource CreateBitmapSource([NotNull] this Bitmap bitmap) {
+    public static BitmapSource CreateBitmapSource(this Bitmap bitmap) {
       var hBitmap = bitmap.GetHbitmap();
       try {
         return Imaging.CreateBitmapSourceFromHBitmap(
@@ -29,7 +28,8 @@ namespace CB.WPF.Drawing {
           Int32Rect.Empty,
           BitmapSizeOptions.FromEmptyOptions()
         );
-      } finally {
+      }
+      finally {
         DeleteObject(hBitmap);
       }
     }

@@ -2,7 +2,6 @@
   <ItemGroup>
     <PackageVersion Include="CB.System" Version="0.2.3" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2023.2.0" />
     <PackageVersion Include="MahApps.Metro" Version="2.1.1" />
     <PackageVersion Include="MahApps.Metro.IconPacks" Version="4.4.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />

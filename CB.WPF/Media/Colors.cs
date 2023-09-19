@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using JetBrains.Annotations;
 
 
 
@@ -11,6 +10,6 @@ namespace CB.WPF.Media {
 
 
 
-    public static Color Parse([NotNull] string colorString) => Drawing.Colors.Parse(colorString);
+    public static Color Parse(string colorString) => Drawing.Colors.Parse(colorString);
   }
 }

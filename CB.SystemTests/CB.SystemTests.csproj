@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netstandard2.0;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net471;net48;net6.0</TargetFrameworks>
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>

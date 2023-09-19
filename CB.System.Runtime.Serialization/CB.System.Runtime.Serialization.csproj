@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net48;netstandard2.0;net6.0</TargetFrameworks>
     <Description>CB.System.Runtime.Serialization covers a collection of different implementations of the IFormatter interface.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

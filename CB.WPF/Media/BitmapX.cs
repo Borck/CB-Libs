@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
-using JetBrains.Annotations;
 
 
 
@@ -19,7 +18,7 @@ namespace CB.WPF.Media {
     /// </summary>
     /// <param name="bitmap"></param>
     /// <returns></returns>
-    public static BitmapSource CreateBitmapSource([NotNull] this Bitmap bitmap)
+    public static BitmapSource CreateBitmapSource(this Bitmap bitmap)
       => Drawing.BitmapX.CreateBitmapSource(bitmap);
   }
 }

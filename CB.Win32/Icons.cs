@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CB.System;
+using CB.Win32.Native;
+using CB.Win32.Native.Structures;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using CB.System;
-using CB.Win32.Native;
-using CB.Win32.Native.Structures;
 
 
 
@@ -89,7 +89,7 @@ namespace CB.Win32 {
 
 
 
-    public static Icon ExtractIcon(string filename, int iconIndex, int width, int height) {
+    public static Icon? ExtractIcon(string filename, int iconIndex, int width, int height) {
       var iconHandle = ExtractIconHandle(filename, iconIndex, width, height);
       return iconHandle != IntPtr.Zero ? Icon.FromHandle(iconHandle) : null;
       //TODO ? User32.DestroyIcon(hIcon); // don't forget to cleanup
@@ -97,12 +97,12 @@ namespace CB.Win32 {
 
 
 
-    public static Icon ExtractIcon(string filename, int iconIndex, int size)
+    public static Icon? ExtractIcon(string filename, int iconIndex, int size)
       => ExtractIcon(filename, iconIndex, size, size);
 
 
 
-    public static Icon ExtractIcon(string filename, int iconIndex, IconSize size) {
+    public static Icon? ExtractIcon(string filename, int iconIndex, IconSize size) {
       var numSize = size.GetDefaultSize();
       return ExtractIcon(filename, iconIndex, numSize.Width, numSize.Height);
     }
@@ -110,7 +110,7 @@ namespace CB.Win32 {
 
 
     [Obsolete("Use ExtractIcon()")]
-    public static Icon ExtractAssociatedIcon(string fileName, ushort size) {
+    public static Icon? ExtractAssociatedIcon(string fileName, ushort size) {
       if (File.Exists(fileName)) {
         return ExtractIconFromResource(fileName, size);
       }
@@ -126,19 +126,19 @@ namespace CB.Win32 {
 
 
     [Obsolete("Use ExtractIcon instead")]
-    public static Icon ExtractIconFromResource(string fileName, int iconIndex, bool largeIcon)
+    public static Icon? ExtractIconFromResource(string fileName, int iconIndex, bool largeIcon)
       => ExtractIcon(fileName, iconIndex, largeIcon ? IconSize.Large : IconSize.Small);
 
 
 
     [Obsolete("Use ExtractIcon instead")]
-    public static Icon ExtractIconFromResource(string fileName, int iconIndex, ushort size)
+    public static Icon? ExtractIconFromResource(string fileName, int iconIndex, ushort size)
       => ExtractIcon(fileName, iconIndex, size);
 
 
 
     [Obsolete("Use ExtractIcon() instead, and separate index with comma separator yourself")]
-    public static Icon ExtractIconFromResource(
+    public static Icon? ExtractIconFromResource(
       string filename,
       ushort size) {
       var (left, right) = filename.SeparateLast(',');
@@ -149,7 +149,7 @@ namespace CB.Win32 {
 
 
     [Obsolete("Use ExtractIcon instead")]
-    public static Icon ExtractIconFromExe(string file, bool large, int iconIndex = 0)
+    public static Icon? ExtractIconFromExe(string file, bool large, int iconIndex = 0)
       => ExtractIcon(file, iconIndex, large ? IconSize.Large : IconSize.Small);
   }
 }

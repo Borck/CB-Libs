@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp2.0;netcoreapp3.0;netcoreapp3.1;netstandard2.0;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net6.0</TargetFrameworks>
     <RootNamespace>CB.System</RootNamespace>
     <Configurations>Debug;Release</Configurations>
     <Description>CB.System is a collection of common classes to solve frequently occurring problems.</Description>

@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 
 
 
@@ -17,7 +16,7 @@ namespace CB.WPF.Drawing {
 
 
 
-    public static Color Parse([NotNull] string colorString) {
+    public static Color Parse(string colorString) {
       return (Color)Converter.ConvertFromString(colorString);
     }
   }

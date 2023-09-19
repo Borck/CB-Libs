@@ -1,9 +1,8 @@
-﻿using System;
+﻿using CB.System;
+using CB.Win32.Native;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using CB.System;
-using CB.Win32.Native;
-using JetBrains.Annotations;
 
 
 
@@ -18,7 +17,7 @@ namespace CB.Win32 {
     /// </summary>
     /// <param name="resource">resource file or comma separated string of resource file and string index</param>
     /// <returns></returns>
-    public static string GetLocalizedName([NotNull] string resource) {
+    public static string GetLocalizedName(string resource) {
       if (resource.StartsWith(
 #if NETCOREAPP
         '@'

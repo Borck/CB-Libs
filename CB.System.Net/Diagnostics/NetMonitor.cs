@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SharpPcap;
+using System;
 using System.Threading.Tasks;
-using SharpPcap;
 
 
 
@@ -33,7 +33,8 @@ namespace CB.System.Net.Diagnostics {
             }
 
             return captureDevices;
-          } catch (DllNotFoundException e) {
+          }
+          catch (DllNotFoundException e) {
             throw new InvalidOperationException(
               "Could not load dll for traffic monitoring (PCAP), maybe WinPCAP is not installed ",
               e
@@ -78,9 +79,9 @@ namespace CB.System.Net.Diagnostics {
 
 
 
-    private void OnPacketReceived(object sender, CaptureEventArgs e) {
+    private void OnPacketReceived(object sender, PacketCapture packetCapture) {
       if (Started)
-        _receivedBytes += e.Packet.Data.Length;
+        _receivedBytes += packetCapture.Data.Length;
     }
 
 
