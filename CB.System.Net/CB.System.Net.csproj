@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1;netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net6.0;net7.0</TargetFrameworks>
     <Description>CB.System.Net is a collection of networking classes to solve frequently occurring problems.</Description>
     <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System.Net</AssemblyName>
-    <Version>0.3.0.0</Version>
+    <Version>0.4.1.0</Version>
     <PackageIcon>icon.png</PackageIcon>
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -22,9 +22,6 @@
     <PackageTags>system util helper utility utilities collection network tcp ip mac extensions</PackageTags>
     <Authors>Christian Borck</Authors>
     <Product>CB-Libs</Product>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CB.System" />
