@@ -8,6 +8,30 @@ using System.Text.Json;
 
 namespace CB.System.Collections {
   public static class ArrayX {
+    /// <summary>
+    /// Validates equality between two arrays element-wise up to a given length.
+    /// </summary>
+    /// <param name="array1"></param>
+    /// <param name="array2"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static bool AreEqual<T>(this T[] array1, T[] array2, int length) {
+      if (array1.Length < length || array2.Length < length) {
+        throw new ArgumentException("One of the arrays is shorter than the specified length.");
+      }
+
+      for (var i = length - 1; i >= 0; i--) {
+        if (Equals(array1[i], array2[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+
+
+    [Obsolete("Use System.Array.Fill instead.")]
     public static T[] Repeat<T>(T element, int size) {
       var array = new T[size];
       unchecked {
