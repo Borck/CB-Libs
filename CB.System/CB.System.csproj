@@ -9,7 +9,7 @@
     <RepositoryUrl></RepositoryUrl>
     <Platforms>AnyCPU</Platforms>
     <AssemblyName>CB.System</AssemblyName>
-    <Version>0.4.0.0</Version>
+    <Version>0.4.1.0</Version>
     <PackageIcon>icon.png</PackageIcon>
     <LangVersion>8</LangVersion>
     <AnalysisLevel>latest</AnalysisLevel>
