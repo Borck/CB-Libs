@@ -1,5 +1,5 @@
-﻿using System;
-using ProtoBuf;
+﻿using ProtoBuf;
+using System;
 
 
 
@@ -64,6 +64,7 @@ namespace CB.System.Net.Helper {
 
     public static class Factory {
       public static TestProtoContract CreateSample(int deep = 2) {
+        //TODO ProtoBufSerializer throws System.InvalidOperationException because of recursive object structure.
         if (deep <= 0) {
           throw new ArgumentException($"'{nameof(deep)}' must be greater zero");
         }
