@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 
 
@@ -255,15 +254,10 @@ namespace CB.System.Collections {
 
 
 
-    public static T[] DeepClone<T>(this T[] data, int index, int length) {
-      var arrCopy = new T[length];
-      Array.Copy(data, index, arrCopy, 0, length);
-      using (var ms = new MemoryStream()) {
-        var bf = new BinaryFormatter();
-        bf.Serialize(ms, arrCopy);
-        ms.Position = 0;
-        return (T[])bf.Deserialize(ms);
-      }
+    [Obsolete("Use alternative libraries for this like AutoMapper")]
+    public static T[]? DeepClone<T>(this T[] data, int index, int length) {
+      var json = JsonSerializer.SerializeToUtf8Bytes(data);
+      return JsonSerializer.Deserialize<T[]>(json);
     }
 
 
