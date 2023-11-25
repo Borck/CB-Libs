@@ -54,11 +54,17 @@ namespace CB.System.Net {
     private async void DoFetchClients() {
       try {
         while (Started) {
-          var tcpClient = await Task.Run(() => Listener.AcceptTcpClientAsync(), _cancelSource.Token);
+          var tcpClient =
+#if NET6_0_OR_GREATER
+            await Listener.AcceptTcpClientAsync(_cancelSource.Token);
+#else
+            await Task.Run(() => Listener.AcceptTcpClientAsync(), _cancelSource.Token);
+#endif
           var vrClient = new TypedTcpClient<TData>(tcpClient, _serializer);
           ClientAccepted?.Invoke(this, vrClient);
         }
-      } finally {
+      }
+      finally {
         Listener.Stop();
       }
 
