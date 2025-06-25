@@ -1,38 +1,52 @@
 ﻿using System.IO;
 using CB.System.IO;
 using ProtoBuf;
+using ProtoBuf.Meta;
 
 
 
 namespace CB.System.Runtime.Serialization {
   public class ProtoBufSerializer<TData> : IFormatter<TData> {
     private readonly PrefixStyle _prefixStyle;
+    private readonly RuntimeTypeModel _model;
 
+    #region constructors
 
-
-    public ProtoBufSerializer(PrefixStyle prefixStyle) {
+    public ProtoBufSerializer(PrefixStyle prefixStyle, RuntimeTypeModel model) {
       _prefixStyle = prefixStyle;
+      _model = model;
     }
+    
+    public ProtoBufSerializer(RuntimeTypeModel model)
+      : this(PrefixStyle.Fixed32, model) { }
+
+
+
+    public ProtoBufSerializer(PrefixStyle prefixStyle)
+      : this(prefixStyle, RuntimeTypeModel.Default) { }
 
 
 
     public ProtoBufSerializer()
-      : this( PrefixStyle.Fixed32 ) { }
+      : this(PrefixStyle.Fixed32) { }
 
+    #endregion
 
+    #region methods and others
 
     public void Prepare()
-      => Serializer.PrepareSerializer<TData>();
+      => _model[typeof(TData)].CompileInPlace();
 
 
 
-    public void Serialize(Stream stream, TData data) {
-      Serializer.SerializeWithLengthPrefix( stream, data, _prefixStyle );
-    }
+    public void Serialize(Stream stream, TData data) =>
+      _model.SerializeWithLengthPrefix(stream, data, typeof(TData), _prefixStyle, 0);
 
 
 
     public TData Deserialize(Stream stream)
-      => Serializer.DeserializeWithLengthPrefix<TData>( stream, _prefixStyle );
+      => (TData)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(stream, null, typeof(TData), _prefixStyle, 0);
+
+    #endregion
   }
 }
