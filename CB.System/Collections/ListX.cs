@@ -23,6 +23,19 @@ namespace CB.System.Collections {
 
 
 
+    public static void RemoveRange<T>(this IList<T> list, IEnumerable<T> items) {
+      if (list is List<T> concreteList) {
+        concreteList.RemoveRange(items);
+        return;
+      }
+
+      foreach (var item in items) {
+        _ = list.Remove(item);
+      }
+    }
+
+
+
     public static void RemoveRange<T>(this IList<T> collection, int index, int count) {
       for (var i = index + count - 1; i >= index; i--) {
         collection.RemoveAt(i);
@@ -47,7 +60,8 @@ namespace CB.System.Collections {
         for (var i = oldSize; i < newSize; i++) {
           collection.Add(newEntry());
         }
-      } else if (difference < 0) {
+      }
+      else if (difference < 0) {
         collection.RemoveRange(oldSize, difference);
       }
 
