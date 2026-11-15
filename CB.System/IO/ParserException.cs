@@ -1,6 +1,8 @@
-﻿namespace CB.System.IO;
+namespace CB.System.IO;
 
 using global::System;
+using global::System.Runtime.Serialization;
+using global::System.Security;
 
 public class ParserException : Exception {
   public ParserException(
@@ -25,6 +27,12 @@ public class ParserException : Exception {
     int lineIndex,
     Exception innerException)
     : base(CreateMessage(filename, lineIndex), innerException) { }
+
+
+
+  [SecuritySafeCritical]
+  protected ParserException(SerializationInfo info, StreamingContext context)
+    : base(info, context) { }
 
 
 

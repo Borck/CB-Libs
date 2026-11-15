@@ -31,7 +31,9 @@ namespace CB.System.Collections;
 using global::System;
 using global::System.Collections;
 using global::System.Collections.Generic;
+using global::System.Runtime.Serialization;
 
+[Serializable]
 public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
   #region constructors
 
@@ -57,6 +59,11 @@ public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKe
     : base(dictionary, equalityComparer) => _comparer = comparer;
 
 
+
+  protected ObservableSortedDictionary(SerializationInfo info, StreamingContext context)
+    : base(info, context) {
+    _siInfo = info;
+  }
 
   #endregion public
 
@@ -124,9 +131,43 @@ public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKe
 
   #endregion methods
 
+  #region interfaces
+
+  #region ISerializable
+
+  public override void GetObjectData(SerializationInfo info, StreamingContext context) {
+    ArgumentNullException.ThrowIfNull(info);
+
+    if (!_comparer.GetType().IsSerializable) {
+      throw new NotSupportedException("The supplied Comparer is not serializable.");
+    }
+
+    base.GetObjectData(info, context);
+    info.AddValue("_comparer", _comparer);
+  }
+
+  #endregion ISerializable
+
+  #region IDeserializationCallback
+
+  public override void OnDeserialization(object sender) {
+    if (_siInfo != null) {
+      _comparer = (IComparer<DictionaryEntry>)_siInfo.GetValue("_comparer", typeof(IComparer<DictionaryEntry>));
+    }
+
+    base.OnDeserialization(sender);
+  }
+
+  #endregion IDeserializationCallback
+
+  #endregion interfaces
+
   #region fields
 
-  private readonly IComparer<DictionaryEntry> _comparer;
+  private IComparer<DictionaryEntry> _comparer;
+
+  [NonSerialized]
+  private readonly SerializationInfo _siInfo;
 
   #endregion fields
 }
