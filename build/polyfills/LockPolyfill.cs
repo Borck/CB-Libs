@@ -6,26 +6,30 @@ namespace System.Threading;
 ///   <see cref="ArgumentNullExceptionPolyfill" />.
 /// </summary>
 internal sealed class Lock {
+  private readonly object _monitor = new();
+
+
+
   public Scope EnterScope() {
-    Monitor.Enter(this);
+    Monitor.Enter(_monitor);
     return new(this);
   }
 
 
 
-  public void Enter() => Monitor.Enter(this);
+  public void Enter() => Monitor.Enter(_monitor);
 
 
 
-  public bool TryEnter() => Monitor.TryEnter(this);
+  public bool TryEnter() => Monitor.TryEnter(_monitor);
 
 
 
-  public void Exit() => Monitor.Exit(this);
+  public void Exit() => Monitor.Exit(_monitor);
 
 
 
-  public ref struct Scope {
+  public readonly ref struct Scope {
     private readonly Lock _lock;
 
     internal Scope(Lock @lock) => _lock = @lock;

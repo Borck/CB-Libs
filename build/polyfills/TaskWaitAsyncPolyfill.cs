@@ -9,7 +9,7 @@ internal static class TaskWaitAsyncPolyfill {
     }
 
     var cancelled = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-    using (cancellationToken.Register(static state => ((TaskCompletionSource<bool>)state!).TrySetResult(true), cancelled)) {
+    using (cancellationToken.Register(static state => ((TaskCompletionSource<bool>)state).TrySetResult(true), cancelled)) {
       if (await Task.WhenAny(task, cancelled.Task).ConfigureAwait(false) != task) {
         throw new OperationCanceledException(cancellationToken);
       }

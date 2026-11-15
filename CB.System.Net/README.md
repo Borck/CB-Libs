@@ -19,6 +19,12 @@ The building blocks of a connection that has to survive: a network that comes an
 
 Logging goes through `Microsoft.Extensions.Logging.Abstractions`; the clocks are `TimeProvider`s, so every delay is testable.
 
+## Adapters and traffic
+
+- `NetworkLinkSpeed.GetMBps()` - the nominal speed of the card the machine really talks through (virtual switches, VPNs and container bridges
+  that claim 10 Gbit/s are skipped unless the OS routes through them); `SelectMBps(cards, name)` is the choice over adapters you describe.
+- `NetworkThroughputMeter(incoming)` - measured MB/s over all non-loopback adapters between two calls.
+
 ## Addresses
 
 `IPAddressX.IsLoopbackOrMapped()` and `IPAddressX.IsLoopbackHost(host)` - loopback including the IPv4-mapped IPv6 form a dual-stack server

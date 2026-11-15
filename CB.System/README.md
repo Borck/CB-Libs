@@ -1,4 +1,4 @@
-﻿# CB.System
+# CB.System
 
 *This package is only for testing purpose*.
 
@@ -8,7 +8,9 @@ CB.System is a collection of common classes to solve frequently occurring challe
 * Runtime, IO and interop,
 * Concurrency and threading,
 * Reflection,
-* Event and exception handling and
+* Event and exception handling,
+* Machine-wide readings (`CB.System.Diagnostics`): `SystemMemory.Read()` (total and available physical memory), `SystemCpuSampler` (CPU load,
+  smoothed; `GetSystemTimes` on Windows, `/proc/stat` on Linux) and `SlidingWindowRateCounter` (events per second), and
 * others.
 
 
