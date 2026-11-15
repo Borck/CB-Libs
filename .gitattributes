@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# .cs files are LF in the index and in every working copy (the .editorconfig says end_of_line = lf too).
+*.cs text eol=lf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
