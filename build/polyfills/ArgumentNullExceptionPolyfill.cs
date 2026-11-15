@@ -19,3 +19,16 @@ internal static class ArgumentNullExceptionPolyfill {
     }
   }
 }
+
+
+
+/// <summary><c>ObjectDisposedException.ThrowIf</c> (.NET 7+) for the targets that predate it.</summary>
+internal static class ObjectDisposedExceptionPolyfill {
+  extension(ObjectDisposedException) {
+    public static void ThrowIf([DoesNotReturnIf(true)] bool condition, object instance) {
+      if (condition) {
+        throw new ObjectDisposedException(instance?.GetType().FullName);
+      }
+    }
+  }
+}
