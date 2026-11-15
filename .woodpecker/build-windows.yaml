@@ -1,0 +1,75 @@
+# Build & Test (Windows). Replaces the job build-and-test-windows of .github/workflows/ci.yml and the Azure pipeline.
+#
+# Windows adds what Linux cannot: net48 (built and run there only) and CB.Win32Tests.
+#
+# Woodpecker has no hosted Windows runners and its Docker backend does not run Windows containers, so this workflow needs your own
+# Windows machine running a Woodpecker agent with the local backend (WOODPECKER_BACKEND=local), with git, PowerShell, the .NET SDK
+# of global.json and the .NET 10 runtime installed. See .woodpecker/README.md. The local backend uses `image` as the shell
+# (Windows PowerShell here; the helper scripts are started with -ExecutionPolicy Bypass so the agent's policy does not matter).
+
+when:
+  - event: push
+    branch: master
+  - event: pull_request
+    branch: master # for a pull request: its target branch
+  - event: manual
+
+labels:
+  platform: windows/amd64
+  backend: local
+
+variables:
+  - &shell 'powershell'
+  - &dotnet_env
+    DOTNET_NOLOGO: 'true'
+    DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    # See build-linux.yaml: CI is 'woodpecker' here, Directory.Build.props wants 'true'.
+    ContinuousIntegrationBuild: 'true'
+  - &docs_only_gate "if (Test-Path .ci-docs-only) { Write-Host 'Only documents changed: nothing to do.'; exit 0 }"
+  # PowerShell does not stop at a failing program; the exit code of the last program has to be passed on.
+  - &check 'if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }'
+
+steps:
+  - name: changes
+    image: *shell
+    commands:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File .\.woodpecker\scripts\detect-changes.ps1
+      - *check
+
+  # The agent is not the place to discover a missing runtime half way through the tests.
+  - name: check-dotnet
+    image: *shell
+    commands:
+      - *docs_only_gate
+      - dotnet --list-sdks
+      - dotnet --list-runtimes
+      - 'if (-not ((dotnet --list-sdks) -match "^11\.0\.")) { Write-Error "The .NET 11 SDK (global.json) is not installed on this agent."; exit 1 }'
+      - 'if (-not ((dotnet --list-runtimes) -match "^Microsoft\.NETCore\.App 10\.")) { Write-Error "The .NET 10 runtime (net10.0 tests) is not installed on this agent."; exit 1 }'
+
+  - name: restore
+    image: *shell
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - dotnet restore CB-Libs.slnx
+      - *check
+
+  - name: build
+    image: *shell
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - dotnet build CB-Libs.slnx --configuration Release --no-restore
+      - *check
+
+  # TRX and cobertura reports end up in TestResults\<project>\ of the workspace.
+  - name: test
+    image: *shell
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - powershell -NoProfile -ExecutionPolicy Bypass -File .\.woodpecker\scripts\test.ps1
+      - *check

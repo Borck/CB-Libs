@@ -1,0 +1,70 @@
+# Build & Test (Linux). Replaces the job build-and-test-linux of .github/workflows/ci.yml (and the Azure pipeline's build and test).
+#
+# Linux builds every project (the net*-windows targets compile there, EnableWindowsTargeting) and runs every test project except
+# CB.Win32Tests, which call the Windows API. Tests that need a packet capture library skip themselves.
+# Needs a Woodpecker agent with the Docker backend; see .woodpecker/README.md.
+
+when:
+  - event: push
+    branch: master
+  - event: pull_request
+    branch: master # for a pull request: its target branch
+  - event: manual
+
+labels:
+  platform: linux/amd64
+  backend: docker
+
+variables:
+  # The SDK from global.json (11.0.100, rolls forward to the latest feature band).
+  - &dotnet_image 'mcr.microsoft.com/dotnet/sdk:11.0'
+  - &dotnet_env
+    DOTNET_NOLOGO: 'true'
+    DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    # Directory.Build.props switches on deterministic CI builds when CI == 'true'; Woodpecker sets CI to 'woodpecker' and a step
+    # cannot overwrite that, so ask for it directly.
+    ContinuousIntegrationBuild: 'true'
+  # First line of every step that builds something: a change that only touches documents builds and tests nothing.
+  - &docs_only_gate '[ ! -f .ci-docs-only ] || { echo "Only documents changed: nothing to do."; exit 0; }'
+
+steps:
+  - name: changes
+    image: *dotnet_image
+    commands:
+      - bash .woodpecker/scripts/detect-changes.sh
+
+  - name: restore
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - dotnet restore CB-Libs.slnx
+
+  - name: build
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - dotnet build CB-Libs.slnx --configuration Release --no-restore
+
+  # TRX and cobertura reports end up in TestResults/<project>/ of the workspace (see .woodpecker/README.md for keeping them).
+  # The net10.0 test builds need the .NET 10 runtime next to the SDK.
+  - name: test
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+      SKIP_TEST_PROJECTS: CB.Win32Tests
+    commands:
+      - *docs_only_gate
+      - bash .woodpecker/scripts/dotnet-runtime.sh
+      - bash .woodpecker/scripts/test.sh
+
+  - name: compile-net48
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - bash .woodpecker/scripts/compile-net48.sh
