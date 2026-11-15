@@ -1,4 +1,4 @@
-﻿namespace CB.System.Net;
+namespace CB.System.Net;
 
 using global::System;
 using global::System.Net;
@@ -10,7 +10,15 @@ using CB.System.IO;
 [Obsolete("Use TypedTcpClient instead")]
 public class TypedTcpClientAcceptor<TData> : IDisposable {
   private readonly IFormatter<TData> _serializer;
-  private readonly Task _clientFetcher;
+  private readonly CancellationTokenSource _cancelSource;
+  private readonly CancellationToken _cancellation;
+#if NET9_0_OR_GREATER
+  private readonly Lock _gate = new();
+#else
+  private readonly object _gate = new();
+#endif
+  private Task? _clientFetcher;
+  private bool _disposed;
 
   public readonly TcpListener Listener;
 
@@ -21,16 +29,14 @@ public class TypedTcpClientAcceptor<TData> : IDisposable {
 
   public event EventHandler<TypedTcpClient<TData>>? ClientAccepted;
 
-  private readonly CancellationTokenSource _cancelSource;
-
 
 
   public TypedTcpClientAcceptor(IPEndPoint localEp,
                                 IFormatter<TData> serializer) {
     _serializer = serializer;
-    _cancelSource = new CancellationTokenSource();
-    Listener = new TcpListener(localEp);
-    _clientFetcher = new Task(DoFetchClients, _cancelSource.Token);
+    _cancelSource = new();
+    _cancellation = _cancelSource.Token;
+    Listener = new(localEp);
   }
 
 
@@ -44,35 +50,59 @@ public class TypedTcpClientAcceptor<TData> : IDisposable {
 
 
   public void Start() {
-    Listener.Start();
-    _clientFetcher.Start();
+    lock (_gate) {
+      ObjectDisposedException.ThrowIf(_disposed, this);
+      Listener.Start();
+      _clientFetcher = Task.Run(FetchClientsAsync);
+    }
   }
 
 
 
-  private async void DoFetchClients() {
+  // A Task, not async void: an exception out of async void ends the process. Stopping is the normal way out of the loop - the
+  // pending accept is cancelled or its listener is closed under it - and is not reported as a failure.
+  private async Task FetchClientsAsync() {
     try {
-      while (Started) {
+      while (Started && !_cancellation.IsCancellationRequested) {
         var tcpClient =
 #if NET6_0_OR_GREATER
-          await Listener.AcceptTcpClientAsync(_cancelSource.Token);
+          await Listener.AcceptTcpClientAsync(_cancellation).ConfigureAwait(false);
 #else
-          await Task.Run(() => Listener.AcceptTcpClientAsync(), _cancelSource.Token);
+          await Task.Run(() => Listener.AcceptTcpClientAsync(), _cancellation).ConfigureAwait(false);
 #endif
-        var vrClient = new TypedTcpClient<TData>(tcpClient, _serializer);
-        ClientAccepted?.Invoke(this, vrClient);
+        ClientAccepted?.Invoke(this, new(tcpClient, _serializer));
       }
+    } catch (Exception ex) when (_cancellation.IsCancellationRequested && ex is OperationCanceledException or ObjectDisposedException or SocketException) {
+      // Disposed while waiting for a client.
     } finally {
       Listener.Stop();
     }
-
-    _cancelSource.Cancel();
   }
 
 
 
   public void Dispose() {
+    Task? fetcher;
+    lock (_gate) {
+      if (_disposed) {
+        return;
+      }
+
+      _disposed = true;
+      fetcher = _clientFetcher;
+    }
+
     _cancelSource.Cancel();
-    _cancelSource.Dispose();
+    // Closing the listener releases an accept that cannot be cancelled (net48, netstandard2.0).
+    Listener.Stop();
+
+    // The source is disposed once the loop that reads its token has ended, never under it.
+    if (fetcher is null) {
+      _cancelSource.Dispose();
+    } else {
+      _ = fetcher.ContinueWith(static (_, state) => ((CancellationTokenSource)state!).Dispose(), _cancelSource, TaskScheduler.Default);
+    }
+
+    GC.SuppressFinalize(this);
   }
 }
