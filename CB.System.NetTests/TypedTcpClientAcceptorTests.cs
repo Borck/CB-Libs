@@ -12,7 +12,7 @@ using Xunit;
 #pragma warning disable CS0618
 
 public class TypedTcpClientAcceptorTests {
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void Dispose_WithAStartedAcceptor_ExpectNoCrash() {
     using var tcpAcceptor = new TypedTcpClientAcceptor<object>(IPAddress.Loopback, 0, new Formatter());
     tcpAcceptor.Start();
@@ -24,7 +24,7 @@ public class TypedTcpClientAcceptorTests {
   ///   Start-then-dispose races the accept loop against the disposal of its cancellation source. Once that raced to an
   ///   unhandled exception on a thread-pool task, which ends the whole process (intermittently: the run aborted with exit code 134).
   /// </summary>
-  [Fact]
+  [Fact(Timeout = 30000)]
   public void Dispose_WithManyStartedAcceptors_ExpectNoCrash() {
     for (var i = 0; i < 200; i++) {
       using var tcpAcceptor = new TypedTcpClientAcceptor<object>(IPAddress.Loopback, 0, new Formatter());
@@ -49,7 +49,7 @@ public class TypedTcpClientAcceptorTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void Start_AfterDispose_ExpectObjectDisposedException() {
     var tcpAcceptor = new TypedTcpClientAcceptor<object>(IPAddress.Loopback, 0, new Formatter());
     tcpAcceptor.Dispose();

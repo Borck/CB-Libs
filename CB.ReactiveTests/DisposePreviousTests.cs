@@ -22,7 +22,7 @@ public class DisposePreviousTests {
   ///   default overload disposed nothing at all and every caller kept its predecessor alive and running
   ///   alongside the replacement.
   /// </summary>
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void DisposePrevious_ReleasesTheSupersededItem_AndTheLastOneOnTeardown() {
     var source = new Subject<TrackedDisposable>();
     var emitted = new List<TrackedDisposable>();
@@ -47,7 +47,7 @@ public class DisposePreviousTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void DisposePrevious_ReleasesTheLastItem_WhenTheSourceCompletes() {
     var source = new Subject<TrackedDisposable>();
     using var subscription = source.DisposePrevious().Subscribe();

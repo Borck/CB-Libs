@@ -30,7 +30,7 @@ public class AsyncDisposableXTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void AddAsync_WithAFailingAsyncFunc_ExpectTheFailureLoggedAndNotThrown() {
     var logger = new ListLogger();
     var composite = new CompositeDisposable();
@@ -55,7 +55,7 @@ public class AsyncDisposableXTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void AsDisposable_WithAFailingDispose_ExpectTheFailureLogged() {
     var logger = new ListLogger();
 

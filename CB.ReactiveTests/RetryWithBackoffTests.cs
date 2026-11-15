@@ -34,7 +34,7 @@ public class RetryWithBackoffTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void RetryWithBackoff_WithAnActionThatFailsTwice_ExpectItRunThreeTimes() {
     var calls = 0;
     var logger = new ListLogger();
@@ -58,7 +58,7 @@ public class RetryWithBackoffTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 10000)]
   public void RetryWithBackoff_WithAnActionThatAlwaysFails_ExpectTheLastExceptionAfterMaxAttempts() {
     var calls = 0;
 

@@ -8,7 +8,7 @@ using Xunit;
 
 
 public class DemultiplexTests {
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void Demultiplex_WithAKeySelector_ExpectEachStreamToGetItsKeysItemsAndTheFallbackTheRest() {
     var source = new Subject<(string Key, int Value)>();
     using var demux = source.Demultiplex(item => item.Key);
@@ -27,7 +27,7 @@ public class DemultiplexTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void Demultiplex_WithAStreamNobodyObserves_ExpectItsItemsToGoToTheFallback() {
     var source = new Subject<(string Key, int Value)>();
     using var demux = source.Demultiplex(item => item.Key);
@@ -42,7 +42,7 @@ public class DemultiplexTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void Demultiplex_WithAFailingKeySelector_ExpectTheErrorOnEveryStream() {
     var source = new Subject<int>();
     using var demux = source.Demultiplex(FailingKey);
@@ -61,7 +61,7 @@ public class DemultiplexTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void Demultiplex_WithTheSourceCompleting_ExpectEveryStreamCompleted() {
     var source = new Subject<int>();
     using var demux = source.Demultiplex(item => item % 2);
@@ -78,7 +78,7 @@ public class DemultiplexTests {
 
 
 
-  [Fact]
+  [Fact(Timeout = 5000)]
   public void DemultiplexByType_WithMixedItems_ExpectEachTypesStreamToGetItsItems() {
     var source = new Subject<object>();
     using var demux = source.Demultiplex();

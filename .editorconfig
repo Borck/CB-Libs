@@ -585,9 +585,10 @@ dotnet_diagnostic.xUnit1025.severity = warning
 dotnet_diagnostic.xUnit1026.severity = warning
 # xUnit1027: Collection definition classes must be public
 dotnet_diagnostic.xUnit1027.severity = error
-# xUnit1069: a test with a Timeout should observe TestContext.Current.CancellationToken, so the timeout
-# frees the runner instead of only reporting once the test finally returns on its own.
-dotnet_diagnostic.xUnit1069.severity = warning
+# xUnit1069: off. The synchronous tests keep a Timeout as a hang guard: xunit.v3 reports an overrun as a failure even
+# though nothing can interrupt synchronous code, which is the outcome wanted. The async tests do observe the token
+# (xUnit1051 below stays on).
+dotnet_diagnostic.xUnit1069.severity = none
 # xUnit1051: a call that does take a CancellationToken should be given the test's - always actionable.
 dotnet_diagnostic.xUnit1051.severity = warning
 # xUnit1033: Test classes decorated with 'Xunit.IClassFixture<TFixture>' or 'Xunit.ICollectionFixture<TFixture>' should add a constructor argument of type TFixture
