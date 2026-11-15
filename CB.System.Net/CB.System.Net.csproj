@@ -1,45 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0;net48;netstandard2.0</TargetFrameworks>
+    <RootNamespace>CB.System.Net</RootNamespace>
     <Description>CB.System.Net is a collection of networking classes to solve frequently occurring problems.</Description>
-    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <Platforms>AnyCPU</Platforms>
-    <AssemblyName>CB.System.Net</AssemblyName>
-    <Version>0.4.3.0</Version>
-    <PackageIcon>icon.png</PackageIcon>
-    <LangVersion>11</LangVersion>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Copyright>Copyright © 2023 Christian Borck</Copyright>
     <PackageTags>system util helper utility utilities collection network tcp ip mac extensions</PackageTags>
-    <Authors>Christian Borck</Authors>
-    <Product>CB-Libs</Product>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="CB.System" />
+    <ProjectReference Include="..\CB.System\CB.System.csproj" />
+    <!-- SharpPcap moves out of this package into CB.System.Net.Pcap in a later step of this change. -->
     <PackageReference Include="SharpPcap" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\images\icon.png" Pack="true" PackagePath="\">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

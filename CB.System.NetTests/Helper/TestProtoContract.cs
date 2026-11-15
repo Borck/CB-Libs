@@ -1,15 +1,22 @@
-﻿using ProtoBuf;
+using ProtoBuf;
 using System;
 
 
 
 namespace CB.System.Net.Helper {
+  [ProtoContract]
   class TestProtoContract : ITestProtoContract, IEquatable<TestProtoContract> {
     [ProtoMember(1)]
     public int IntValue { get; }
 
     [ProtoMember(2)]
     public ITestProtoContract? Child { get; }
+
+
+
+    // protobuf-net treats a type without a parameterless constructor as a "tuple" and refuses it inside an inheritance
+    // hierarchy (ITestProtoContract includes this type); it creates the instance through this constructor instead.
+    private TestProtoContract() { }
 
 
 
@@ -64,7 +71,6 @@ namespace CB.System.Net.Helper {
 
     public static class Factory {
       public static TestProtoContract CreateSample(int deep = 2) {
-        //TODO ProtoBufSerializer throws System.InvalidOperationException because of recursive object structure.
         if (deep <= 0) {
           throw new ArgumentException($"'{nameof(deep)}' must be greater zero");
         }

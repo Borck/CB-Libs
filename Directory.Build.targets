@@ -1,0 +1,9 @@
+<Project>
+  <!-- Icon, licence and the project's own README go into every package. Here and not in Directory.Build.props, because
+       IsPackable is only known once the project file has been read. -->
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)images\icon.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE.txt" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="\" Condition="Exists('$(MSBuildProjectDirectory)\README.md')" />
+  </ItemGroup>
+</Project>

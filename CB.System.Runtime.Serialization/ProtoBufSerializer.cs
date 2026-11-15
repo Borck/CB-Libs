@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using CB.System.IO;
 using ProtoBuf;
 using ProtoBuf.Meta;
@@ -45,7 +45,7 @@ namespace CB.System.Runtime.Serialization {
 
 
     public TData Deserialize(Stream stream)
-      => (TData)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(stream, null, typeof(TData), _prefixStyle, 0);
+      => (TData)_model.DeserializeWithLengthPrefix(stream, null, typeof(TData), _prefixStyle, 0);
 
     #endregion
   }
