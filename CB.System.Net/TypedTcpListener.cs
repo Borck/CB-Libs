@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using CB.System.IO;
 
@@ -50,5 +51,12 @@ namespace CB.System.Net {
 
     public async Task<TypedTcpClient<TData>> AcceptTcpClientAsync() =>
       new TypedTcpClient<TData>(await Listener.AcceptTcpClientAsync(), _serializer);
+
+
+
+#if NET6_0_OR_GREATER
+    public async Task<TypedTcpClient<TData>> AcceptTcpClientAsync(CancellationToken cancellationToken) =>
+      new TypedTcpClient<TData>(await Listener.AcceptTcpClientAsync(cancellationToken), _serializer);
+#endif
   }
 }

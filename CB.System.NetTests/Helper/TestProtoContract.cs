@@ -4,28 +4,25 @@ using System;
 
 
 namespace CB.System.Net.Helper {
-  [Serializable, ProtoContract]
-  class RecursiveProtoContract : IRecursiveProtoContract, IEquatable<RecursiveProtoContract> {
+  class TestProtoContract : ITestProtoContract, IEquatable<TestProtoContract> {
     [ProtoMember(1)]
     public int IntValue { get; }
 
     [ProtoMember(2)]
-    public IRecursiveProtoContract? Child { get; }
-
-    private RecursiveProtoContract() { }
+    public ITestProtoContract? Child { get; }
 
 
 
-    public RecursiveProtoContract(
+    public TestProtoContract(
       int intValue,
-      IRecursiveProtoContract? child) {
+      ITestProtoContract? child) {
       IntValue = intValue;
       Child = child;
     }
 
 
 
-    public bool Equals(RecursiveProtoContract? other) {
+    public bool Equals(TestProtoContract other) {
       if (ReferenceEquals(null, other)) {
         return false;
       }
@@ -39,7 +36,7 @@ namespace CB.System.Net.Helper {
 
 
 
-    public override bool Equals(object? obj) {
+    public override bool Equals(object obj) {
       if (ReferenceEquals(this, obj)) {
         return true;
       }
@@ -48,8 +45,11 @@ namespace CB.System.Net.Helper {
         return false;
       }
 
-      return obj.GetType() == GetType() &&
-             Equals((RecursiveProtoContract)obj);
+      if (obj.GetType() != GetType()) {
+        return false;
+      }
+
+      return Equals((TestProtoContract)obj);
     }
 
 
@@ -63,14 +63,15 @@ namespace CB.System.Net.Helper {
 
 
     public static class Factory {
-      public static RecursiveProtoContract CreateRecursiveSample(int deep = 2) {
+      public static TestProtoContract CreateSample(int deep = 2) {
+        //TODO ProtoBufSerializer throws System.InvalidOperationException because of recursive object structure.
         if (deep <= 0) {
           throw new ArgumentException($"'{nameof(deep)}' must be greater zero");
         }
 
-        var contract = new RecursiveProtoContract(deep, default);
-        for (var i = deep - 1; i > 0; i--) {
-          contract = new RecursiveProtoContract(i, contract);
+        TestProtoContract contract = null;
+        for (var i = deep; i > 0; i--) {
+          contract = new TestProtoContract(i, contract);
         }
 
         return contract;

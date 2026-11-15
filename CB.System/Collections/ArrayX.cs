@@ -1,14 +1,37 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 
 
 namespace CB.System.Collections {
   public static class ArrayX {
+    /// <summary>
+    /// Validates equality between two arrays element-wise up to a given length.
+    /// </summary>
+    /// <param name="array1"></param>
+    /// <param name="array2"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static bool AreEqual<T>(this T[] array1, T[] array2, int length) {
+      if (array1.Length < length || array2.Length < length) {
+        throw new ArgumentException("One of the arrays is shorter than the specified length.");
+      }
+
+      for (var i = length - 1; i >= 0; i--) {
+        if (Equals(array1[i], array2[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+
+
+    [Obsolete("Use System.Array.Fill instead.")]
     public static T[] Repeat<T>(T element, int size) {
       var array = new T[size];
       unchecked {
@@ -255,15 +278,10 @@ namespace CB.System.Collections {
 
 
 
-    public static T[] DeepClone<T>(this T[] data, int index, int length) {
-      var arrCopy = new T[length];
-      Array.Copy(data, index, arrCopy, 0, length);
-      using (var ms = new MemoryStream()) {
-        var bf = new BinaryFormatter();
-        bf.Serialize(ms, arrCopy);
-        ms.Position = 0;
-        return (T[])bf.Deserialize(ms);
-      }
+    [Obsolete("Use alternative libraries for this like AutoMapper")]
+    public static T[]? DeepClone<T>(this T[] data, int index, int length) {
+      var json = JsonSerializer.SerializeToUtf8Bytes(data);
+      return JsonSerializer.Deserialize<T[]>(json);
     }
 
 
