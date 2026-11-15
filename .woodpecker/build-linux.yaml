@@ -24,6 +24,9 @@ variables:
     # Directory.Build.props switches on deterministic CI builds when CI == 'true'; Woodpecker sets CI to 'woodpecker' and a step
     # cannot overwrite that, so ask for it directly.
     ContinuousIntegrationBuild: 'true'
+    # A step's container is gone after the step; only the workspace volume (/woodpecker) survives. Without this the packages
+    # restored by one step are missing in the next (NETSDK1064).
+    NUGET_PACKAGES: /woodpecker/nuget-packages
   # First line of every step that builds something: a change that only touches documents builds and tests nothing.
   - &docs_only_gate '[ ! -f .ci-docs-only ] || { echo "Only documents changed: nothing to do."; exit 0; }'
 

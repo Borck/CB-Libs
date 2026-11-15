@@ -62,9 +62,10 @@ file are not workflows.
   image with the runtime baked in (see below) removes the download.
 - **Test results, coverage and packages** are not kept: Woodpecker has no artifact storage, and files only live in the workspace of
   one workflow. See [Keeping files](#keeping-files-and-getting-them-into-a-build).
-- **NuGet cache.** There is none. Docker steps start from an empty `~/.nuget/packages`; the local backend gives each workflow an
-  isolated `HOME` (`WOODPECKER_BACKEND_LOCAL_ISOLATED_HOME=false` on the agent keeps the user's cache, or set `NUGET_PACKAGES`
-  for the agent to a fixed folder). For Docker agents a cache plugin such as `meltwater/drone-cache` with S3/MinIO works.
+- **NuGet cache.** Nothing is cached between pipelines. Every Docker step is a new container, so the Linux workflows point
+  `NUGET_PACKAGES` at `/woodpecker/nuget-packages`, on the volume the steps of one workflow share; without that, packages restored in
+  one step are missing in the next (NETSDK1064). The local backend gives each workflow an isolated `HOME`, which is shared by its steps
+  but new for every workflow (`WOODPECKER_BACKEND_LOCAL_ISOLATED_HOME=false` on the agent keeps the user's cache). For Docker agents a cache plugin such as `meltwater/drone-cache` with S3/MinIO works.
 
 ## Not migrated, and different
 
