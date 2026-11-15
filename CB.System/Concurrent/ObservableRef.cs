@@ -11,7 +11,12 @@ public sealed class ObservableRef<T> {
   private T _value;
 
   public T Value {
-    get => _value;
+    // Under the setter's lock: a value type wider than a word could otherwise be read half written.
+    get {
+      lock (_lock) {
+        return _value;
+      }
+    }
     set {
       lock (_lock) {
         var eventArgs = new NotifyValueChangedEventArgs<T>(value, _value);
