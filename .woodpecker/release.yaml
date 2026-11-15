@@ -1,0 +1,117 @@
+# Release. Replaces .github/workflows/release.yml: tests and packs what a tag or a manual run selects, and publishes the CB packages
+# to nuget.org and the GitHub release when somebody deploys the tested pipeline to the target nuget-org.
+#
+#   tag v<VersionPrefix>[-<suffix>]   e.g. v1.0.0-preview.2 or v1.0.0. The number must equal VersionPrefix in Directory.Build.props;
+#                                     what follows the first '-' is the prerelease suffix, none means the release version itself.
+#                                     The pipeline tests and packs; it publishes nothing by itself.
+#   manual run                        tests and packs what the selected ref would publish. Variable SUFFIX (default preview.1;
+#                                     empty packs the release version), like the suffix input of workflow_dispatch.
+#   deployment to nuget-org           publishes. In the Woodpecker UI: open the green pipeline of the tag, "Deploy", target nuget-org.
+#
+# A published NuGet version cannot be deleted, only unlisted. GitHub's `environment: nuget-org` with required reviewers has no
+# Woodpecker counterpart; the counterpart is the deployment event: nothing leaves without a person with push access pressing
+# Deploy, and the two secrets are enabled for that event only (Settings -> Secrets), so no other pipeline can read them.
+# Needs "Allow deployments" in the repository settings. Secrets:
+#   nuget_api_key   a nuget.org API key with push rights on the CB.* packages.
+#   github_token    a token with Contents: read and write on this repository, for the GitHub release.
+# A deployment rebuilds the commit; Directory.Build.props makes the build deterministic, so it packs what the tag pipeline packed.
+
+when:
+  - event: tag
+    ref: refs/tags/v*
+  - event: manual
+  - event: deployment
+    evaluate: 'CI_PIPELINE_DEPLOY_TARGET == "nuget-org"'
+
+labels:
+  platform: linux/amd64
+  backend: docker
+
+variables:
+  - &dotnet_image 'mcr.microsoft.com/dotnet/sdk:11.0'
+  - &dotnet_env
+    DOTNET_NOLOGO: 'true'
+    DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    ContinuousIntegrationBuild: 'true'
+  - &publish_when
+    - event: deployment
+      evaluate: 'CI_PIPELINE_DEPLOY_TARGET == "nuget-org"'
+  # A step's container is gone after the step; only the workspace (the cloned repository and what the steps put into it) is kept.
+  # Packages restored in ~/.nuget/packages by one step are missing in the next (NETSDK1064, MSB3644 for the net48 reference
+  # assemblies), so every step that runs dotnet keeps them in the workspace.
+  - &nuget_cache 'export NUGET_PACKAGES="$PWD/.nuget-packages" && echo "NuGet packages: $NUGET_PACKAGES"'
+
+steps:
+  # The tag is the version consumers see; the assemblies and the packages say VersionPrefix. Two numbers for one release is how a
+  # support conversation goes wrong. Writes .release-env for the later steps.
+  - name: version
+    image: *dotnet_image
+    commands:
+      - bash .woodpecker/scripts/release-version.sh
+
+  # A release does not ship a package with a known advisory of moderate severity or worse. The audit runs at restore; NU1901-NU1904
+  # are the low/moderate/high/critical advisory warnings, made errors here only.
+  - name: restore
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *nuget_cache
+      - 'dotnet restore CB-Libs.slnx -p:NuGetAudit=true -p:NuGetAuditLevel=moderate -p:NuGetAuditMode=all "-p:WarningsAsErrors=NU1901%3BNU1902%3BNU1903%3BNU1904"'
+
+  - name: build
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *nuget_cache
+      - . ./.release-env
+      - dotnet build CB-Libs.slnx --configuration Release --no-restore -p:VersionSuffix="$RELEASE_SUFFIX"
+
+  # Windows-only tests and net48 run in the Windows job of .github/workflows/ci.yml on the same commit; a tag should point at a
+  # commit whose CI is green.
+  - name: test
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+      SKIP_TEST_PROJECTS: CB.Win32Tests
+      TEST_REPORT: 'false'
+    commands:
+      - *nuget_cache
+      - bash .woodpecker/scripts/dotnet-runtime.sh
+      - bash .woodpecker/scripts/test.sh
+
+  - name: pack
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *nuget_cache
+      - . ./.release-env
+      - dotnet pack CB-Libs.slnx --configuration Release --no-build --output artifacts -p:VersionSuffix="$RELEASE_SUFFIX"
+
+  - name: check-packages
+    image: *dotnet_image
+    commands:
+      - . ./.release-env
+      - bash .woodpecker/scripts/check-packages.sh
+
+  - name: publish
+    image: *dotnet_image
+    when: *publish_when
+    environment:
+      NUGET_API_KEY:
+        from_secret: nuget_api_key
+    commands:
+      - bash .woodpecker/scripts/nuget-push.sh
+
+  # Only for a tag (a branch deployment has no release to create).
+  - name: github-release
+    image: *dotnet_image
+    when: *publish_when
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    commands:
+      - . ./.release-env
+      - bash .woodpecker/scripts/github-release.sh

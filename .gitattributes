@@ -6,6 +6,9 @@
 # .cs files are LF in the index and in every working copy (the .editorconfig says end_of_line = lf too).
 *.cs text eol=lf
 
+# The shell scripts of .woodpecker/scripts run in Linux containers: LF in every working copy (the .editorconfig says so too).
+*.sh text eol=lf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #

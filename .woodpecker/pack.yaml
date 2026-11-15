@@ -1,0 +1,43 @@
+# Pack the packages. Replaces the job pack of .github/workflows/ci.yml and the Azure pipeline's pack step.
+#
+# What release.yaml publishes has to pack on every change, not only on the day of a release. Runs when build-linux
+# succeeded (a workflow only starts when everything it depends on finished successfully). The Windows tests are not part of
+# Woodpecker: they run in the Windows job of .github/workflows/ci.yml.
+
+when:
+  - event: push
+    branch: master
+  - event: pull_request
+    branch: master # for a pull request: its target branch
+  - event: manual
+
+depends_on:
+  - build-linux
+
+labels:
+  platform: linux/amd64
+  backend: docker
+
+variables:
+  - &dotnet_image 'mcr.microsoft.com/dotnet/sdk:11.0'
+  - &dotnet_env
+    DOTNET_NOLOGO: 'true'
+    DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    ContinuousIntegrationBuild: 'true'
+  - &docs_only_gate '[ ! -f .ci-docs-only ] || { echo "Only documents changed: nothing to do."; exit 0; }'
+
+steps:
+  - name: changes
+    image: *dotnet_image
+    commands:
+      - bash .woodpecker/scripts/detect-changes.sh
+
+  # The packages are in artifacts/*.*nupkg of the workspace (see .woodpecker/README.md for keeping them).
+  - name: pack
+    image: *dotnet_image
+    environment:
+      <<: *dotnet_env
+    commands:
+      - *docs_only_gate
+      - dotnet pack CB-Libs.slnx --configuration Release --output artifacts
+      - ls -l artifacts
