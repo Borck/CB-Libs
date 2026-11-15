@@ -3,6 +3,7 @@ namespace CB.Reactive;
 using global::System;
 using global::System.Linq;
 using global::System.Reactive.Linq;
+using global::System.Reactive.Threading.Tasks;
 using global::System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -24,7 +25,7 @@ public class RetryWithBackoffTests {
     }
     );
 
-    var value = await source.RetryWhen(ObservableX.RetryWithBackoff("read device", _short, TimeSpan.FromMilliseconds(5), logger)).FirstAsync();
+    var value = await source.RetryWhen(ObservableX.RetryWithBackoff("read device", _short, TimeSpan.FromMilliseconds(5), logger)).FirstAsync().ToTask(TestContext.Current.CancellationToken);
 
     Assert.Equal(42, value);
     Assert.Equal(3, attempts);
@@ -33,7 +34,7 @@ public class RetryWithBackoffTests {
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void RetryWithBackoff_WithAnActionThatFailsTwice_ExpectItRunThreeTimes() {
     var calls = 0;
     var logger = new ListLogger();
@@ -57,7 +58,7 @@ public class RetryWithBackoffTests {
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void RetryWithBackoff_WithAnActionThatAlwaysFails_ExpectTheLastExceptionAfterMaxAttempts() {
     var calls = 0;
 

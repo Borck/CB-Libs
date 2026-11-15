@@ -32,7 +32,8 @@ public class NetMonitorTests {
 
                             monitor.Stop();
                             return monitor.ReceivedBytes;
-                          }
+                          },
+                          TestContext.Current.CancellationToken
                         );
 
     Assert.True(receivedBytes > 0);
@@ -52,7 +53,8 @@ public class NetMonitorTests {
 
                             monitor.Stop();
                             return monitor.ReceivedBytes;
-                          }
+                          },
+                          TestContext.Current.CancellationToken
                         );
     Assert.True(receivedBytes > 0);
   }
@@ -65,6 +67,7 @@ public class NetMonitorTests {
         var monitor = new NetMonitor();
         monitor.Start();
         monitor.Stop();
-      }
+      },
+      TestContext.Current.CancellationToken
     );
 }

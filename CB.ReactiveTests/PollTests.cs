@@ -3,6 +3,7 @@ namespace CB.Reactive;
 using global::System;
 using global::System.Linq;
 using global::System.Reactive.Linq;
+using global::System.Reactive.Threading.Tasks;
 using global::System.Threading.Tasks;
 using Xunit;
 
@@ -25,7 +26,7 @@ public class PollTests {
                        .Poll(helper.Poll, TimeSpan.Zero)
                        .Take(10)
                        .ToList()
-                       .LastAsync();
+                       .ToTask(TestContext.Current.CancellationToken);
 
     Assert.Equal(Enumerable.Range(0, 10), values);
   }

@@ -18,7 +18,7 @@ public class SequenceOperatorsTests {
   private static readonly bool[] _pair = [true, false];
   private static readonly bool[] _mixedBooleans = [true, false, true, true, false];
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void PairWithPrevious_WithThreeValues_ExpectTwoPairs() {
     var pairs = Observable.Range(1, 3).PairWithPrevious().ToList().Wait();
 
@@ -27,7 +27,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void PairWithPrevious_WithAColdSource_ExpectTheSourceSubscribedOnce() {
     var subscriptions = 0;
     var source = Observable.Defer(() => {
@@ -44,7 +44,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereConsecutive_WithAPredicateOnPreviousAndCurrent_ExpectTheCurrentOfMatchingPairs() {
     var rising = Observable.Range(0, 1).Concat(_rising.ToObservable()).WhereConsecutive((previous, current) => current > previous);
 
@@ -53,7 +53,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereConsecutive_WithAColdSource_ExpectTheSourceSubscribedOnce() {
     var subscriptions = 0;
     var source = Observable.Defer(() => {
@@ -69,7 +69,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void TrackStatusFlags_WithSetsAndAReset_ExpectSnapshotsThatDoNotChangeLater() {
     var flags = new Subject<string>();
     var reset = new Subject<Unit>();
@@ -90,7 +90,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void DoOnPrevious_WithOnPreviousAndOnLast_ExpectEachValueReportedWhenItsSuccessorArrivesAndTheLastOnCompletion() {
     var seen = new List<string>();
 
@@ -101,7 +101,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void DoOnPrevious_WithASingleHandler_ExpectItUsedForPreviousAndLast() {
     var seen = new List<int>();
 
@@ -112,7 +112,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void DoOnPrevious_WithAnEmptySource_ExpectNoHandlerCalled() {
     var calls = 0;
 
@@ -123,7 +123,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void DoOnPrevious_WithAnErrorHandler_ExpectTheLastValueAndTheException() {
     var failure = new InvalidOperationException("boom");
     var reported = new List<(Exception Error, int? Previous)>();
@@ -139,7 +139,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereTrueAndWhereFalse_WithMixedValues_ExpectTheMatchingOnes() {
     var values = _mixedBooleans.ToObservable();
 
@@ -149,7 +149,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Theory(Timeout = 5000)]
+  [Theory]
   [InlineData(BoolToCommandTrigger.FromFalseToTrue, 2)]
   [InlineData(BoolToCommandTrigger.FromTrueToFalse, 2)]
   [InlineData(BoolToCommandTrigger.FromAnyToTrue, 3)]
@@ -165,13 +165,13 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void ToCommand_WithAnUndefinedTrigger_ExpectNoCommand() =>
     Assert.Empty(_pair.ToObservable().ToCommand((BoolToCommandTrigger)99).ToList().Wait());
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereHasValue_WithNullableValues_ExpectTheUnderlyingValuesOfTheNonNullOnes() {
     var values = _nullableValues.ToObservable();
 
@@ -180,7 +180,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereNotDisposed_WithASelector_ExpectOnlyItemsThatAreNotDisposed() {
     var alive = new Item();
     var gone = new Item { IsDisposed = true };
@@ -192,7 +192,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereNotDisposed_WithCancelableItems_ExpectOnlyItemsThatAreNotDisposed() {
     var alive = new BooleanDisposable();
     var gone = new BooleanDisposable();
@@ -203,7 +203,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereNotNullAndNotDisposed_WithASelector_ExpectNeitherNullNorDisposedItems() {
     var alive = new Item();
     var gone = new Item { IsDisposed = true };
@@ -215,7 +215,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void WhereNotNullAndNotDisposed_WithCancelableItems_ExpectNeitherNullNorDisposedItems() {
     var alive = new BooleanDisposable();
     var gone = new BooleanDisposable();
@@ -228,7 +228,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void ThrowIfDisposed_WithADisposedItem_ExpectObjectDisposedExceptionWithTheMessage() {
     var gone = new BooleanDisposable();
     gone.Dispose();
@@ -242,7 +242,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void ThrowIfDisposed_WithASelectorAndLiveItems_ExpectTheItemsUnchanged() {
     var items = new[] { new Item(), new Item() };
 
@@ -251,7 +251,7 @@ public class SequenceOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void ThrowIfDisposed_WithASelectorAndADisposedItem_ExpectObjectDisposedException() {
     var gone = new Item { IsDisposed = true };
 

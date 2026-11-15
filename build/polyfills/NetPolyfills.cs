@@ -18,6 +18,12 @@ internal static class NetPolyfills {
 
 
 
+  /// <summary><c>TcpClient.ConnectAsync(IPAddress, int, CancellationToken)</c> (.NET 5+); the same note applies.</summary>
+  public static Task ConnectAsync(this TcpClient client, IPAddress address, int port, CancellationToken cancellationToken) =>
+    client.ConnectAsync(address, port).WaitAsync(cancellationToken);
+
+
+
   /// <summary><c>CancellationTokenSource.CancelAsync()</c> (.NET 8+).</summary>
   public static Task CancelAsync(this CancellationTokenSource source) {
     source.Cancel();

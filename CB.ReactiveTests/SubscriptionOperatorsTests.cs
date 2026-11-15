@@ -10,7 +10,7 @@ using Xunit;
 
 
 public class SubscriptionOperatorsTests {
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void SubscribeGuarded_WithAThrowingHandler_ExpectTheSubscriptionKeptAndTheErrorLogged() {
     var source = new Subject<int>();
     var logger = new ListLogger();
@@ -40,7 +40,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void SubscribeGuarded_WithAFaultingSource_ExpectTheFaultLoggedAndNothingThrown() {
     var source = new Subject<int>();
     var logger = new ListLogger();
@@ -56,7 +56,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void SubscribeGuarded_WithoutALogger_ExpectTheErrorSwallowed() {
     var source = new Subject<int>();
     using var subscription = source.SubscribeGuarded(_ => throw new InvalidOperationException(), "Test.Context");
@@ -67,7 +67,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void TrackSubscription_WithSubscribersComingAndGoing_ExpectHasObserversToFollow() {
     var source = new Subject<int>();
     var tracked = source.TrackSubscription(out var hasObservers);
@@ -84,7 +84,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void Share_WithTwoSubscribers_ExpectOneSubscriptionToTheSourceUntilTheLastLeaves() {
     var subscriptions = 0;
     var disposals = 0;
@@ -108,7 +108,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void FireAndForget_WithDisposableItems_ExpectEachDisposedAfterTheObserverHasSeenIt() {
     var source = new Subject<Tracked>();
     var disposedWhenDelivered = new List<bool>();
@@ -123,7 +123,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void FireAndForget_WithASelector_ExpectWhatItReturnsDisposedAfterDelivery() {
     var source = new Subject<int>();
     var tracked = new Tracked();
@@ -138,7 +138,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void FireAndForget_WithAnObserverThatThrows_ExpectTheItemStillDisposed() {
     var source = new Subject<Tracked>();
     var tracked = new Tracked();
@@ -155,7 +155,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void Trace_WithALogger_ExpectSubscribeValueAndCompletionLoggedUnderTheName() {
     var logger = new ListLogger();
 
@@ -173,7 +173,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 5000)]
+  [Fact]
   public void Trace_WithTwoSubscriptions_ExpectEachItsOwnNumber() {
     var logger = new ListLogger();
     var traced = Observable.Never<int>().Trace("probe", logger);
@@ -187,7 +187,7 @@ public class SubscriptionOperatorsTests {
 
 
 
-  [Fact(Timeout = 20000)]
+  [Fact]
   public void RatePerSecond_WithAnItemPerTick_ExpectTheCountOfTheLastSecond() {
     var rates = Observable.Range(0, 3).RatePerSecond().ToList().Wait();
 

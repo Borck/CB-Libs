@@ -9,7 +9,7 @@ using Xunit;
 
 
 public class DropWhenBusyTests {
-  [Fact(Timeout = 20000)]
+  [Fact]
   public void DropWhenBusy_WithAnItemWhileAnotherIsPending_ExpectTheLaterOneDropped() {
     var scheduler = new TestScheduler();
     var source = new Subject<int>();
@@ -27,7 +27,7 @@ public class DropWhenBusyTests {
 
 
 
-  [Fact(Timeout = 20000)]
+  [Fact]
   public void DropWhenBusy_WithAnItemAfterTheLastWasDelivered_ExpectItDelivered() {
     var scheduler = new TestScheduler();
     var source = new Subject<int>();
@@ -44,7 +44,7 @@ public class DropWhenBusyTests {
 
 
 
-  [Fact(Timeout = 20000)]
+  [Fact]
   public void DropWhenBusy_WithAnItemPendingWhenTheSubscriptionEnds_ExpectItReportedDroppedAndNotDelivered() {
     var scheduler = new TestScheduler();
     var source = new Subject<int>();

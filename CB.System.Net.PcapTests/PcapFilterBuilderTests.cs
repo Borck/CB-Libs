@@ -1,4 +1,4 @@
-﻿namespace CB.System.Net.Diagnostics;
+namespace CB.System.Net.Diagnostics;
 
 using global::System.Net;
 using global::System.Net.NetworkInformation;

@@ -8,7 +8,7 @@ using Xunit;
 
 
 public class QuietLoopSchedulerTests {
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void Schedule_WithALiveLoop_ExpectTheWorkRunOnTheLoop() {
     using var loop = new EventLoopScheduler();
     var quiet = new QuietLoopScheduler(loop);
@@ -20,12 +20,12 @@ public class QuietLoopSchedulerTests {
     }
     );
 
-    Assert.True(ran.Wait(TimeSpan.FromSeconds(5)));
+    Assert.True(ran.Wait(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
   }
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void Schedule_WithADisposedLoop_ExpectTheWorkDroppedWhereTheLoopItselfThrows() {
     var loop = new EventLoopScheduler();
     var quiet = new QuietLoopScheduler(loop);
@@ -47,7 +47,7 @@ public class QuietLoopSchedulerTests {
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void Now_ExpectTheLoopsClock() {
     using var loop = new EventLoopScheduler();
 

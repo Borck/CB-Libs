@@ -1,4 +1,4 @@
-﻿namespace CB.System.Net;
+namespace CB.System.Net;
 
 using global::System.Linq;
 using global::System.Net;
@@ -20,7 +20,7 @@ public class TypedTcpClientTests {
 
   [Fact(Timeout = 10000)]
   public async Task TestConnect_ConnectClientToServer_ExpectClientIsConnected() {
-    var (vrClient, unused) = await NetworkTestHelper.ConnectTwoClientsAsync<object>();
+    var (vrClient, unused) = await NetworkTestHelper.ConnectTwoClientsAsync<object>(cancellationToken: TestContext.Current.CancellationToken);
     Assert.True(vrClient.Connected);
   }
 
@@ -29,7 +29,7 @@ public class TypedTcpClientTests {
   [Fact(Timeout = 10000)]
   public async Task TestConnect_ConnectOverAllLocalIpAddresses_ExpectAcceptedClientsAreConnected() {
     var (vrClient, vrAcceptedClient) =
-      await NetworkTestHelper.ConnectTwoClientsAsync<object>();
+      await NetworkTestHelper.ConnectTwoClientsAsync<object>(cancellationToken: TestContext.Current.CancellationToken);
 
     try {
       Assert.True(vrAcceptedClient.Connected);
@@ -47,7 +47,7 @@ public class TypedTcpClientTests {
     foreach (var ipAddress in ipAddrs.Where(addr => addr.AddressFamily == AddressFamily.InterNetwork)) {
       var localEp = new IPEndPoint(ipAddress, 0);
       var (vrClient, vrAcceptedClient) =
-        await NetworkTestHelper.ConnectTwoClientsAsync<object>(localEp);
+        await NetworkTestHelper.ConnectTwoClientsAsync<object>(localEp, cancellationToken: TestContext.Current.CancellationToken);
 
       try {
         Assert.True(vrClient.Connected);
@@ -66,7 +66,7 @@ public class TypedTcpClientTests {
     var dataExpected = NetworkTestHelper.CreateProtoBufTestData();
 
     var (vrClient, vrAcceptedClient) =
-      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>(cancellationToken: TestContext.Current.CancellationToken);
 
     try {
       vrClient.Send(dataExpected);
@@ -87,7 +87,7 @@ public class TypedTcpClientTests {
     var data4Expected = NetworkTestHelper.CreateProtoBufTestData(4);
 
     var (vrClient, vrAcceptedClient) =
-      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>(cancellationToken: TestContext.Current.CancellationToken);
 
     try {
       vrClient.Send(data3Expected);
@@ -109,7 +109,7 @@ public class TypedTcpClientTests {
     var data4Expected = NetworkTestHelper.CreateProtoBufTestData(4);
 
     var (vrClient, vrAcceptedClient) =
-      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>();
+      await NetworkTestHelper.ConnectTwoClientsAsync<ITestProtoContract>(cancellationToken: TestContext.Current.CancellationToken);
 
     try {
       vrClient.Send(data3Expected);

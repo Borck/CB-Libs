@@ -1,8 +1,9 @@
-﻿namespace CB.System.Net.Helper;
+namespace CB.System.Net.Helper;
 
 using global::System;
 using global::System.Net;
 using global::System.Net.Sockets;
+using global::System.Threading;
 using global::System.Threading.Tasks;
 using CB.System.IO;
 using CB.System.Runtime.Serialization;
@@ -33,7 +34,7 @@ public static class NetworkTestHelper {
 
 
   public static async Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
-    ConnectTwoClientsAsync<T>(IPEndPoint localEp, Func<IFormatter<T>> newFormatter) {
+    ConnectTwoClientsAsync<T>(IPEndPoint localEp, Func<IFormatter<T>> newFormatter, CancellationToken cancellationToken = default) {
     var listener = new TcpListener(localEp);
     listener.Start();
 
@@ -51,7 +52,7 @@ public static class NetworkTestHelper {
     var vrClient = new TypedTcpClient<T>(newFormatter.Invoke());
     vrClient.Connect(serverEp);
 
-    var vrAcceptedClient = await taskAcceptClient.ConfigureAwait(false);
+    var vrAcceptedClient = await taskAcceptClient.WaitAsync(cancellationToken).ConfigureAwait(false);
 
     return (vrClient, vrAcceptedClient);
   }
@@ -59,7 +60,8 @@ public static class NetworkTestHelper {
 
 
   public static Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
-    ConnectTwoClientsAsync<T>(IPEndPoint localEp, Formatter formatter = Formatter.ProtoBuf) => ConnectTwoClientsAsync(localEp, () => CreatePredefinedFormatter<T>(formatter));
+    ConnectTwoClientsAsync<T>(IPEndPoint localEp, Formatter formatter = Formatter.ProtoBuf, CancellationToken cancellationToken = default) =>
+    ConnectTwoClientsAsync(localEp, () => CreatePredefinedFormatter<T>(formatter), cancellationToken);
 
 
 
@@ -70,9 +72,10 @@ public static class NetworkTestHelper {
   /// <param name="formatter"></param>
   /// <returns></returns>
   public static Task<(TypedTcpClient<T>, TypedTcpClient<T>)>
-    ConnectTwoClientsAsync<T>(Formatter formatter = Formatter.ProtoBuf) => ConnectTwoClientsAsync(
+    ConnectTwoClientsAsync<T>(Formatter formatter = Formatter.ProtoBuf, CancellationToken cancellationToken = default) => ConnectTwoClientsAsync(
       new IPEndPoint(IPAddress.Loopback, 0),
-      () => CreatePredefinedFormatter<T>(formatter)
+      () => CreatePredefinedFormatter<T>(formatter),
+      cancellationToken
     );
 
 

@@ -1,5 +1,6 @@
 namespace CB.System.Reflection;
 
+using global::System;
 using global::System.Collections.Generic;
 using global::System.Reflection;
 using Xunit;
@@ -28,9 +29,17 @@ public class AssemblyNameEqualityComparerTests {
 
 
 
+  /// <summary>
+  ///   The comparer is an ordinal comparison of <see cref="AssemblyName.FullName" />, and whether two names that differ in case have
+  ///   different full names is up to the runtime (.NET Framework treats them as the same name), so that is what is asserted.
+  /// </summary>
   [Fact]
-  public void Equals_WithDifferentCase_ExpectFalse() =>
-    Assert.False(_comparer.Equals(new AssemblyName("Some.Assembly"), new AssemblyName("some.assembly")));
+  public void Equals_WithNamesDifferingInCase_ExpectTheOrdinalComparisonOfTheirFullNames() {
+    var upper = new AssemblyName("Some.Assembly");
+    var lower = new AssemblyName("some.assembly");
+
+    Assert.Equal(string.Equals(upper.FullName, lower.FullName, StringComparison.Ordinal), _comparer.Equals(upper, lower));
+  }
 
 
 

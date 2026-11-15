@@ -25,12 +25,12 @@ public class AsyncDisposableXTests {
     Assert.False(started.Task.IsCompleted);
     composite.Dispose();
 
-    await started.Task;
+    await started.Task.WaitAsync(TestContext.Current.CancellationToken);
   }
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void AddAsync_WithAFailingAsyncFunc_ExpectTheFailureLoggedAndNotThrown() {
     var logger = new ListLogger();
     var composite = new CompositeDisposable();
@@ -50,12 +50,12 @@ public class AsyncDisposableXTests {
 
     asyncDisposable.AsDisposable().Dispose();
 
-    await asyncDisposable.Disposed.Task;
+    await asyncDisposable.Disposed.Task.WaitAsync(TestContext.Current.CancellationToken);
   }
 
 
 
-  [Fact(Timeout = 10000)]
+  [Fact]
   public void AsDisposable_WithAFailingDispose_ExpectTheFailureLogged() {
     var logger = new ListLogger();
 
@@ -75,7 +75,7 @@ public class AsyncDisposableXTests {
 
     composite.Dispose();
 
-    await asyncDisposable.Disposed.Task;
+    await asyncDisposable.Disposed.Task.WaitAsync(TestContext.Current.CancellationToken);
   }
 
 
@@ -92,7 +92,7 @@ public class AsyncDisposableXTests {
       disposable.Dispose();
     }
 
-    await asyncDisposable.Disposed.Task;
+    await asyncDisposable.Disposed.Task.WaitAsync(TestContext.Current.CancellationToken);
   }
 
 
