@@ -68,7 +68,8 @@ steps:
       - . ./.release-env
       - dotnet build CB-Libs.slnx --configuration Release --no-restore -p:VersionSuffix="$RELEASE_SUFFIX"
 
-  # Windows-only tests and net48 run in build-windows.yaml on the same commit; a tag should point at a commit whose CI is green.
+  # Windows-only tests and net48 run in the Windows job of .github/workflows/ci.yml on the same commit; a tag should point at a
+  # commit whose CI is green.
   - name: test
     image: *dotnet_image
     environment:

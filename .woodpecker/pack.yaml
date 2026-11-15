@@ -1,7 +1,8 @@
 # Pack the packages. Replaces the job pack of .github/workflows/ci.yml and the Azure pipeline's pack step.
 #
-# What release.yaml publishes has to pack on every change, not only on the day of a release. Runs when both build workflows
-# succeeded (a workflow only starts when everything it depends on finished successfully).
+# What release.yaml publishes has to pack on every change, not only on the day of a release. Runs when build-linux
+# succeeded (a workflow only starts when everything it depends on finished successfully). The Windows tests are not part of
+# Woodpecker: they run in the Windows job of .github/workflows/ci.yml.
 
 when:
   - event: push
@@ -10,12 +11,8 @@ when:
     branch: master # for a pull request: its target branch
   - event: manual
 
-# build-windows only takes part in manual runs while there is no Windows agent (see there); optional: pack does not wait for a
-# workflow that is not part of the pipeline.
 depends_on:
   - build-linux
-  - name: build-windows
-    optional: true
 
 labels:
   platform: linux/amd64
