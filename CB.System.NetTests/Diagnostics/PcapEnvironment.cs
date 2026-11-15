@@ -1,3 +1,4 @@
+#if !NET6_0_OR_GREATER
 namespace CB.System.Net.Diagnostics;
 
 using global::System;
@@ -28,3 +29,4 @@ internal static class PcapEnvironment {
     }
   }
 }
+#endif

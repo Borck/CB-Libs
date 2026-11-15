@@ -57,7 +57,8 @@ public sealed class NetworkThroughputMeter {
 
 
 
-  private static long ReadAdapterBytes(bool incoming) {
+  /// <summary>The bytes received or sent so far over all adapters except loopback (the operating system's counters).</summary>
+  internal static long ReadAdapterBytes(bool incoming) {
     var interfaces = NetworkInterface.GetAllNetworkInterfaces()
                                      .Where(i => i.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                                      .ToList();

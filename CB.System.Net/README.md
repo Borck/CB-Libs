@@ -30,12 +30,19 @@ Logging goes through `Microsoft.Extensions.Logging.Abstractions`; the clocks are
 `IPAddressX.IsLoopbackOrMapped()` and `IPAddressX.IsLoopbackHost(host)` - loopback including the IPv4-mapped IPv6 form a dual-stack server
 sees (`IPAddress.IsLoopback` alone does not cover it on every target).
 
+## Traffic monitoring (`NetMonitor`)
+
+`NetMonitor.Start()` / `Stop()` measure the traffic the machine received in between: `ReceivedBytes` and `BytesPerSecond`.
+
+- **net10.0 and later:** native, from the byte counters of the network adapters (loopback excluded). Nothing to install. They count all traffic of
+  the machine and cannot be filtered: a constructor with a filter throws `PlatformNotSupportedException` (`NetMonitor.SupportsFilter` tells).
+- **net48 and netstandard2.0:** packet capture through [SharpPcap](https://github.com/dotpcap/sharppcap) is the fallback, since those targets have
+  no native counter that can filter. It needs Npcap (Windows) or libpcap (Linux, macOS) and the right to open a capture device, and it
+  accepts a pcap filter - build one with `PcapFilterBuilder`. SharpPcap is referenced for those two targets only.
+
 ## Upgrading from 0.4.x
 
-`NetMonitor` and `PcapFilterBuilder` (namespace `CB.System.Net.Diagnostics`) moved to the package
-[CB.System.Net.Pcap](../CB.System.Net.Pcap/README.md), so that this package no longer depends on SharpPcap. The namespace did not
-change: reference `CB.System.Net.Pcap` as well and the code compiles as before.
-
-## Contributors/Contributing
-
-Maintained by [Christian Borck](https://github.com/Borck/)
+`NetMonitor` and `PcapFilterBuilder` stay in this package and namespace (`CB.System.Net.Diagnostics`). On net10.0 and later `NetMonitor` is native
+and refuses a filter (see above); on net48 and netstandard2.0 it works as before, through SharpPcap. SharpPcap is no longer a dependency of
+the net10.0 and net11.0 builds. Also, `NetMonitor.BytesPerSecond` was computed from `TimeSpan.Milliseconds` (the 0-999 part) instead of the elapsed
+milliseconds, so it was wrong for any interval over a second; that is fixed.

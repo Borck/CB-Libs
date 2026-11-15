@@ -1,3 +1,4 @@
+#if !NET6_0_OR_GREATER
 namespace CB.System.Net.Diagnostics;
 
 using global::System.Net;
@@ -6,6 +7,7 @@ using global::System.Threading;
 using global::System.Threading.Tasks;
 using Xunit;
 
+// Packet capture is the fallback of the targets without a native counter (net48, netstandard2.0); the native one has its own tests.
 public class NetMonitorTests {
   private const string PING_IP = "9.9.9.9";
 
@@ -71,3 +73,4 @@ public class NetMonitorTests {
       TestContext.Current.CancellationToken
     );
 }
+#endif

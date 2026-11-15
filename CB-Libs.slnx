@@ -10,8 +10,6 @@
   <Project Path="CB.Reactive/CB.Reactive.csproj" />
   <Project Path="CB.ReactiveTests/CB.ReactiveTests.csproj" />
   <Project Path="CB.System.Net/CB.System.Net.csproj" />
-  <Project Path="CB.System.Net.Pcap/CB.System.Net.Pcap.csproj" />
-  <Project Path="CB.System.Net.PcapTests/CB.System.Net.PcapTests.csproj" />
   <Project Path="CB.System.NetTests/CB.System.NetTests.csproj" />
   <Project Path="CB.System.Runtime.Serialization/CB.System.Runtime.Serialization.csproj" />
   <Project Path="CB.System.Runtime.SerializationTests/CB.System.Runtime.SerializationTests.csproj" />
