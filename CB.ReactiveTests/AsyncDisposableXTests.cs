@@ -15,9 +15,9 @@ public class AsyncDisposableXTests {
   [Fact(Timeout = 10000)]
   public async Task AddAsync_WithAnAsyncFunc_ExpectItStartedWhenTheCompositeIsDisposed() {
     var composite = new CompositeDisposable();
-    var started = new TaskCompletionSource();
+    var started = new TaskCompletionSource<bool>();
     composite.AddAsync(() => {
-      started.SetResult();
+      started.SetResult(true);
       return Task.CompletedTask;
     }
     );
@@ -98,12 +98,12 @@ public class AsyncDisposableXTests {
 
 
   private sealed class Recording : IAsyncDisposable {
-    public TaskCompletionSource Disposed { get; } = new();
+    public TaskCompletionSource<bool> Disposed { get; } = new();
 
     public Exception? Failure { get; init; }
 
     public ValueTask DisposeAsync() {
-      Disposed.TrySetResult();
+      Disposed.TrySetResult(true);
       return Failure is null ? default : new(Task.FromException(Failure));
     }
   }

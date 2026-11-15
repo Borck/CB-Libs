@@ -12,6 +12,13 @@
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
   </ItemGroup>
 
+  <!-- Language support the net48 test builds lack (init, records, the nullable and caller attributes). The polyfill sources of
+       build/polyfills are not compiled into test projects: a test that has InternalsVisibleTo access sees its library's copy, and a
+       second one is ambiguous. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+  </ItemGroup>
+
   <!-- Microsoft.Testing.Extensions.CodeCoverage registers its builder hook only when GenerateTestingPlatformEntryPoint is True,
        and xunit.v3 sets that to false because it generates its own entry point. Without the hook the coverage option is an
        "Unknown option". The same registration the IVI-Framework repository uses; GUID and type are the package's own. -->
