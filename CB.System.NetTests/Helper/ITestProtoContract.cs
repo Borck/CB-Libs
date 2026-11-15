@@ -1,14 +1,12 @@
-﻿using ProtoBuf;
+﻿namespace CB.System.Net.Helper;
+
+using ProtoBuf;
+
+[ProtoContract]
+[ProtoInclude(1, typeof(TestProtoContract))]
+public interface ITestProtoContract {
+  public int IntValue { get; }
 
 
-
-namespace CB.System.Net.Helper {
-  [ProtoContract]
-  [ProtoInclude( 1, typeof(TestProtoContract) )]
-  public interface ITestProtoContract {
-    int IntValue { get; }
-
-
-    ITestProtoContract Child { get; }
-  }
+  public ITestProtoContract Child { get; }
 }

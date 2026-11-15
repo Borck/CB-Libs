@@ -1,16 +1,14 @@
-﻿using System;
+﻿namespace CB.WPF.Windows;
+
+using System;
 using System.Windows;
 using System.Windows.Threading;
 
-
-
-namespace CB.WPF.Windows {
-  public static class UiElementX {
-    private static readonly Action EmptyDelegate = delegate { };
+public static class UiElementX {
+  private static readonly Action EmptyDelegate = delegate { };
 
 
 
-    public static void Refresh(this UIElement uiElement)
-      => uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
-  }
+  public static void Refresh(this UIElement uiElement)
+    => uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
 }
