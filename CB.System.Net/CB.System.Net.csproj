@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CB.System\CB.System.csproj" />
-    <!-- SharpPcap moves out of this package into CB.System.Net.Pcap in a later step of this change. -->
-    <PackageReference Include="SharpPcap" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.0'">

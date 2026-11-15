@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +17,7 @@ namespace CB.System.Net.Diagnostics {
 
 
 
-    [Fact(Timeout = 10000)]
+    [Fact(Timeout = 10000, SkipUnless = nameof(PcapEnvironment.IsCaptureAvailable), SkipType = typeof(PcapEnvironment), Skip = PcapEnvironment.SKIP_REASON)]
     public async Task DataLengthTest_FilterBuilder_ExpectPacketReceived() {
       var pingIp = IPAddress.Parse(PING_IP);
       var filterBuilder = new PcapFilterBuilder()
@@ -41,7 +41,7 @@ namespace CB.System.Net.Diagnostics {
 
 
 
-    [Fact(Timeout = 10000)]
+    [Fact(Timeout = 10000, SkipUnless = nameof(PcapEnvironment.IsCaptureAvailable), SkipType = typeof(PcapEnvironment), Skip = PcapEnvironment.SKIP_REASON)]
     public async Task DataLengthTest_FilterString_ExpectPacketReceived() {
       var receivedBytes = await new TaskFactory().StartNew(
                             () => {
@@ -60,7 +60,7 @@ namespace CB.System.Net.Diagnostics {
 
 
 
-    [Fact(Timeout = 2000)]
+    [Fact(Timeout = 2000, SkipUnless = nameof(PcapEnvironment.IsCaptureAvailable), SkipType = typeof(PcapEnvironment), Skip = PcapEnvironment.SKIP_REASON)]
     public async Task StartStopTest() {
       await new TaskFactory().StartNew(
         () => {
