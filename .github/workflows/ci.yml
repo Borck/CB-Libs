@@ -2,52 +2,185 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  build-test:
-    name: build and test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+  # A change that only touches documents builds and tests nothing. A path filter on the workflow would leave the
+  # required checks "expected" forever and block the merge of every docs-only pull request; a job skipped by `if`
+  # reports as skipped, which a required check accepts (same reasoning as IVI-Framework's ci.yml).
+  changes:
+    name: What changed
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+
     steps:
-      - uses: actions/checkout@v4
-      # SDK 11 from global.json; the net10.0 test builds need the .NET 10 runtime next to it.
-      - uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          global-json-file: global.json
+          fetch-depth: 0
+
+      - name: Find what changed
+        id: diff
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "No base to compare with: everything runs."
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          files=$(git diff --name-only "$base" "${{ github.sha }}")
+          echo "$files"
+          code=false
+          if echo "$files" | grep -qvE '^docs/|\.md$|^images/'; then code=true; fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+  # Linux builds every project (the net*-windows targets compile there, EnableWindowsTargeting) and runs every test project
+  # except CB.Win32Tests, which call the Windows API. Tests that need a packet capture library skip themselves.
+  build-and-test-linux:
+    name: Build & Test (Linux)
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # The SDK from global.json; the net10.0 test builds need the .NET 10 runtime next to it.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
           dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore dependencies
+        run: dotnet restore CB-Libs.slnx
+
       - name: Build
-        run: dotnet build CB-Libs.slnx -c Release
-      # Windows also builds and runs net48 and the Windows-only tests (CB.Win32Tests). Linux runs everything else;
-      # tests that need a packet capture library skip themselves there.
-      - name: Test
+        run: dotnet build CB-Libs.slnx --configuration Release --no-restore
+
+      # One test project at a time: a fatal error in one must not stop the rest, and the exit code reports any failure.
+      # global.json at the repository root carries the Microsoft.Testing.Platform opt-in, so run from the root.
+      - name: Test & Code Coverage
         shell: bash
         run: |
+          status=0
           for dir in *Tests; do
-            if [ "$dir" = "CB.Win32Tests" ] && [ "$RUNNER_OS" != "Windows" ]; then continue; fi
-            dotnet test --project "$dir/$dir.csproj" -c Release --no-build
+            if [ "$dir" = "CB.Win32Tests" ]; then echo "Skipping $dir: it runs on Windows."; continue; fi
+            echo "::group::$dir"
+            dotnet test --project "$dir/$dir.csproj" --configuration Release --no-build -- \
+              --results-directory "$RUNNER_TEMP/TestResults/$dir" --report-trx --coverage --coverage-output-format cobertura \
+              || { echo "::error::Tests failed in $dir"; status=1; }
+            echo "::endgroup::"
           done
+          exit $status
 
-  pack:
-    name: pack
-    needs: build-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - name: Upload test results
+        uses: actions/upload-artifact@v7
+        if: always()
         with:
-          global-json-file: global.json
+          name: test-results-linux
+          path: ${{ runner.temp }}/TestResults/**/*.trx
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage-reports-linux
+          path: ${{ runner.temp }}/TestResults/**/*.cobertura.xml
+
+  # Windows adds what Linux cannot: net48 (built and run there only) and CB.Win32Tests.
+  build-and-test-windows:
+    name: Build & Test (Windows)
+    runs-on: windows-latest
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore dependencies
+        run: dotnet restore CB-Libs.slnx
+
+      - name: Build
+        run: dotnet build CB-Libs.slnx --configuration Release --no-restore
+
+      - name: Test & Code Coverage
+        shell: bash
+        run: |
+          status=0
+          for dir in *Tests; do
+            echo "::group::$dir"
+            dotnet test --project "$dir/$dir.csproj" --configuration Release --no-build -- \
+              --results-directory "$RUNNER_TEMP/TestResults/$dir" --report-trx --coverage --coverage-output-format cobertura \
+              || { echo "::error::Tests failed in $dir"; status=1; }
+            echo "::endgroup::"
+          done
+          exit $status
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results-windows
+          path: ${{ runner.temp }}/TestResults/**/*.trx
+
+  # What release.yml publishes has to pack on every change, not only on the day of a release.
+  pack:
+    name: Pack the packages
+    runs-on: ubuntu-latest
+    needs: [ build-and-test-linux, build-and-test-windows ]
+    if: always() && !cancelled() && needs.build-and-test-linux.result == 'success' && needs.build-and-test-windows.result == 'success'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
+
       - name: Pack
-        run: dotnet pack CB-Libs.slnx -c Release -o artifacts
-      - uses: actions/upload-artifact@v4
+        run: dotnet pack CB-Libs.slnx --configuration Release --output artifacts
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
         with:
           name: packages
           path: artifacts/*.*nupkg
