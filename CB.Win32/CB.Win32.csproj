@@ -1,69 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>net471;net48;netstandard2.0;net5.0-windows;net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
-    <UseWPF>true</UseWPF>
-    <Version>0.4.2.0</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <Copyright>Copyright © 2023 Christian Borck</Copyright>
+    <TargetFrameworks>net11.0-windows;net10.0-windows;net48;netstandard2.0</TargetFrameworks>
+    <RootNamespace>CB.Win32</RootNamespace>
+    <Description>CB.Win32 provides a more comfortable way to access the Windows API.</Description>
     <PackageTags>win32 registry icon shortcut process</PackageTags>
-    <Authors>Christian Borck</Authors>
-    <Product>CB-Libs</Product>
-    <Description>CB.Win32 provides a more confortable way to access the Windows API.</Description>
-    <LangVersion>11</LangVersion>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Nullable>enable</Nullable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <COMReference Include="IWshRuntimeLibrary.dll">
-      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-    </COMReference>
-  </ItemGroup>
-
+  <!-- Shortcuts and what is built on COM are not part of the netstandard2.0 build. -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefaultItemExcludes>$(DefaultItemExcludes);**\*.core.*</DefaultItemExcludes>
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="CB.System" />
-    <PackageReference Include="Microsoft.Win32.Registry" />
+    <ProjectReference Include="..\CB.System\CB.System.csproj" />
     <PackageReference Include="System.Drawing.Common" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\images\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="README.md">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Shortcut is late-bound COM through `dynamic`. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <!-- The registry is in the box on net48; the other targets take it from a package. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Win32.Registry" />
   </ItemGroup>
 
 </Project>

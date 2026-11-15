@@ -1,42 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+namespace CB.Win32;
+
+using global::System;
+using global::System.Collections.Generic;
+using global::System.IO;
+using global::System.Linq;
+using global::System.Runtime.InteropServices;
 using IWshRuntimeLibrary;
 
 
 
-namespace CB.Win32 {
-  public static class Shortcuts {
-    //TODO add .Net Standard support
-    //see: https://stackoverflow.com/questions/234231/creating-application-shortcut-in-a-directory
+public static class Shortcuts {
+  public const string EXTENSION = ".lnk";
+  private const string FILE_PATTERN_SHORTCUT = "*" + EXTENSION;
 
-    public const string EXTENSION = ".lnk";
-    private const string FILE_PATTERN_SHORTCUT = "*" + EXTENSION;
+  public static readonly string PathStartMenuLocalMachine =
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs");
 
-    public static readonly string PathStartMenuLocalMachine =
-      Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
-
-    public static readonly string PathStartMenuCurrentUser =
-      Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";
+  public static readonly string PathStartMenuCurrentUser =
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
 
 
 
-    /// <summary>
-    ///   Loaded a shortcut file or creates it, if not exists. Note: Created shortcuts must be saved
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <returns></returns>
-    public static IWshShortcut CreateShortcut(string filename)
-      => new WshShell().CreateShortcut(filename) as IWshShortcut;
-
-
-
-    public static IEnumerable<IWshShortcut> GetStartMenuShortcuts() {
-      return (from startMenu in new[] {PathStartMenuCurrentUser, PathStartMenuLocalMachine}
-              from filename in Directory.GetFiles(startMenu, FILE_PATTERN_SHORTCUT, SearchOption.AllDirectories)
-              where Path.GetExtension(filename) == EXTENSION
-              select CreateShortcut(filename));
+  /// <summary>Loads a shortcut file or creates it, if it does not exist. Note: a created shortcut must be saved.</summary>
+  public static IWshShortcut CreateShortcut(string filename) {
+    var shellType = Type.GetTypeFromProgID("WScript.Shell")
+                    ?? throw new PlatformNotSupportedException("The Windows Script Host (WScript.Shell) is not available.");
+    dynamic shell = Activator.CreateInstance(shellType)
+                    ?? throw new PlatformNotSupportedException("The Windows Script Host (WScript.Shell) could not be created.");
+    try {
+      return new LateBoundShortcut(shell.CreateShortcut(filename));
+    } finally {
+      Marshal.FinalReleaseComObject(shell);
     }
   }
+
+
+
+  public static IEnumerable<IWshShortcut> GetStartMenuShortcuts() =>
+    from startMenu in new[] { PathStartMenuCurrentUser, PathStartMenuLocalMachine }
+    where Directory.Exists(startMenu)
+    from filename in Directory.GetFiles(startMenu, FILE_PATTERN_SHORTCUT, SearchOption.AllDirectories)
+    select CreateShortcut(filename);
 }

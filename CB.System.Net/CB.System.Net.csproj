@@ -1,45 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
-    <Description>CB.System.Net is a collection of networking classes to solve frequently occurring problems.</Description>
-    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <Platforms>AnyCPU</Platforms>
-    <AssemblyName>CB.System.Net</AssemblyName>
-    <Version>0.4.3.0</Version>
-    <PackageIcon>icon.png</PackageIcon>
-    <LangVersion>11</LangVersion>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Copyright>Copyright © 2023 Christian Borck</Copyright>
+    <TargetFrameworks>net11.0;net10.0;net48;netstandard2.0</TargetFrameworks>
+    <RootNamespace>CB.System.Net</RootNamespace>
+    <Description>CB.System.Net is a collection of networking classes to solve frequently occurring problems: typed TCP clients, reconnect and back-off, address helpers, adapter speed and traffic measurement.</Description>
     <PackageTags>system util helper utility utilities collection network tcp ip mac extensions</PackageTags>
-    <Authors>Christian Borck</Authors>
-    <Product>CB-Libs</Product>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="CB.System" />
-    <PackageReference Include="SharpPcap" />
+    <ProjectReference Include="..\CB.System\CB.System.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\images\icon.png" Pack="true" PackagePath="\">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <InternalsVisibleTo Include="CB.System.NetTests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.0'">
+    <!-- SharpPcap is NetMonitor's fallback where the target has no native counter that can filter; net10.0 and later do not reference it. -->
+    <PackageReference Include="SharpPcap" />
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+    <PackageReference Include="Microsoft.Bcl.TimeProvider" />
   </ItemGroup>
 
 </Project>

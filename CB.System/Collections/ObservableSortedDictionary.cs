@@ -26,162 +26,148 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+namespace CB.System.Collections;
+
+using global::System;
+using global::System.Collections;
+using global::System.Collections.Generic;
+using global::System.Runtime.Serialization;
+
+[Serializable]
+public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
+  #region constructors
+
+  #region public
+
+  public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer) => _comparer = comparer;
 
 
 
-namespace CB.System.Collections {
-  [Serializable]
-  public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
-    #region constructors
-
-    #region public
-
-    public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer) {
-      _comparer = comparer;
-    }
+  public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer, IDictionary<TKey, TValue> dictionary)
+    : base(dictionary) => _comparer = comparer;
 
 
 
-    public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer, IDictionary<TKey, TValue> dictionary)
-      : base(dictionary) {
-      _comparer = comparer;
-    }
+  public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer, IEqualityComparer<TKey> equalityComparer)
+    : base(equalityComparer) => _comparer = comparer;
 
 
 
-    public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer, IEqualityComparer<TKey> equalityComparer)
-      : base(equalityComparer) {
-      _comparer = comparer;
-    }
+  public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer,
+                                    IDictionary<TKey, TValue> dictionary,
+                                    IEqualityComparer<TKey> equalityComparer)
+    : base(dictionary, equalityComparer) => _comparer = comparer;
 
 
 
-    public ObservableSortedDictionary(IComparer<DictionaryEntry> comparer,
-                                      IDictionary<TKey, TValue> dictionary,
-                                      IEqualityComparer<TKey> equalityComparer)
-      : base(dictionary, equalityComparer) {
-      _comparer = comparer;
-    }
-
-
-
-    protected ObservableSortedDictionary(SerializationInfo info, StreamingContext context)
-      : base(info, context) {
-      _siInfo = info;
-    }
-
-    #endregion public
-
-    #endregion constructors
-
-    #region methods
-
-    #region protected
-
-    protected override bool AddEntry(TKey key, TValue value) {
-      var entry = new DictionaryEntry(key, value);
-      var index = GetInsertionIndexForEntry(entry);
-      KeyedEntryCollection.Insert(index, entry);
-      return true;
-    }
-
-
-
-    protected virtual int GetInsertionIndexForEntry(DictionaryEntry newEntry) {
-      return BinaryFindInsertionIndex(0, Count - 1, newEntry);
-    }
-
-
-
-    protected override bool SetEntry(TKey key, TValue value) {
-      var keyExists = KeyedEntryCollection.Contains(key);
-
-      // if identical key/value pair already exists, nothing to do
-      if (keyExists && value.Equals((TValue)KeyedEntryCollection[key].Value)) {
-        return false;
-      }
-
-      // otherwise, remove the existing entry
-      if (keyExists) {
-        KeyedEntryCollection.Remove(key);
-      }
-
-      // add the new entry
-      var entry = new DictionaryEntry(key, value);
-      var index = GetInsertionIndexForEntry(entry);
-      KeyedEntryCollection.Insert(index, entry);
-
-      return true;
-    }
-
-    #endregion protected
-
-    #region private
-
-    private int BinaryFindInsertionIndex(int first, int last, DictionaryEntry entry) {
-      if (last < first) {
-        return first;
-      } else {
-        var mid = first + (last - first) / 2;
-        var result = _comparer.Compare(KeyedEntryCollection[mid], entry);
-        if (result == 0) {
-          return mid;
-        } else if (result < 0) {
-          return BinaryFindInsertionIndex(mid + 1, last, entry);
-        } else {
-          return BinaryFindInsertionIndex(first, mid - 1, entry);
-        }
-      }
-    }
-
-    #endregion private
-
-    #endregion methods
-
-    #region interfaces
-
-    #region ISerializable
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-      if (info == null) {
-        throw new ArgumentNullException("info");
-      }
-
-      if (!_comparer.GetType().IsSerializable) {
-        throw new NotSupportedException("The supplied Comparer is not serializable.");
-      }
-
-      base.GetObjectData(info, context);
-      info.AddValue("_comparer", _comparer);
-    }
-
-    #endregion ISerializable
-
-    #region IDeserializationCallback
-
-    public override void OnDeserialization(object sender) {
-      if (_siInfo != null) {
-        _comparer = (IComparer<DictionaryEntry>)_siInfo.GetValue("_comparer", typeof(IComparer<DictionaryEntry>));
-      }
-
-      base.OnDeserialization(sender);
-    }
-
-    #endregion IDeserializationCallback
-
-    #endregion interfaces
-
-    #region fields
-
-    private IComparer<DictionaryEntry> _comparer;
-
-    [NonSerialized]
-    private readonly SerializationInfo _siInfo;
-
-    #endregion fields
+  protected ObservableSortedDictionary(SerializationInfo info, StreamingContext context)
+    : base(info, context) {
+    _siInfo = info;
   }
+
+  #endregion public
+
+  #endregion constructors
+
+  #region methods
+
+  #region protected
+
+  protected override bool AddEntry(TKey key, TValue value) {
+    var entry = new DictionaryEntry(key, value);
+    var index = GetInsertionIndexForEntry(entry);
+    KeyedEntryCollection.Insert(index, entry);
+    return true;
+  }
+
+
+
+  protected virtual int GetInsertionIndexForEntry(DictionaryEntry newEntry) => BinaryFindInsertionIndex(0, Count - 1, newEntry);
+
+
+
+  protected override bool SetEntry(TKey key, TValue value) {
+    var keyExists = KeyedEntryCollection.Contains(key);
+
+    // if identical key/value pair already exists, nothing to do
+    if (keyExists && value.Equals((TValue)KeyedEntryCollection[key].Value)) {
+      return false;
+    }
+
+    // otherwise, remove the existing entry
+    if (keyExists) {
+      KeyedEntryCollection.Remove(key);
+    }
+
+    // add the new entry
+    var entry = new DictionaryEntry(key, value);
+    var index = GetInsertionIndexForEntry(entry);
+    KeyedEntryCollection.Insert(index, entry);
+
+    return true;
+  }
+
+  #endregion protected
+
+  #region private
+
+  private int BinaryFindInsertionIndex(int first, int last, DictionaryEntry entry) {
+    if (last < first) {
+      return first;
+    } else {
+      var mid = first + (last - first) / 2;
+      var result = _comparer.Compare(KeyedEntryCollection[mid], entry);
+      if (result == 0) {
+        return mid;
+      } else if (result < 0) {
+        return BinaryFindInsertionIndex(mid + 1, last, entry);
+      } else {
+        return BinaryFindInsertionIndex(first, mid - 1, entry);
+      }
+    }
+  }
+
+  #endregion private
+
+  #endregion methods
+
+  #region interfaces
+
+  #region ISerializable
+
+  public override void GetObjectData(SerializationInfo info, StreamingContext context) {
+    ArgumentNullException.ThrowIfNull(info);
+
+    if (!_comparer.GetType().IsSerializable) {
+      throw new NotSupportedException("The supplied Comparer is not serializable.");
+    }
+
+    base.GetObjectData(info, context);
+    info.AddValue("_comparer", _comparer);
+  }
+
+  #endregion ISerializable
+
+  #region IDeserializationCallback
+
+  public override void OnDeserialization(object sender) {
+    if (_siInfo != null) {
+      _comparer = (IComparer<DictionaryEntry>)_siInfo.GetValue("_comparer", typeof(IComparer<DictionaryEntry>));
+    }
+
+    base.OnDeserialization(sender);
+  }
+
+  #endregion IDeserializationCallback
+
+  #endregion interfaces
+
+  #region fields
+
+  private IComparer<DictionaryEntry> _comparer;
+
+  [NonSerialized]
+  private readonly SerializationInfo _siInfo;
+
+  #endregion fields
 }

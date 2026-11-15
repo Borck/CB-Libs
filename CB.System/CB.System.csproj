@@ -1,45 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;net48;netcoreapp3.1;netstandard2.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0;net48;netstandard2.0</TargetFrameworks>
     <RootNamespace>CB.System</RootNamespace>
-    <Configurations>Debug;Release</Configurations>
     <Description>CB.System is a collection of common classes to solve frequently occurring challenges according to System.*.</Description>
-    <PackageProjectUrl>https://github.com/Borck/CB-Libs</PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <Platforms>AnyCPU</Platforms>
-    <AssemblyName>CB.System</AssemblyName>
-    <Version>0.4.4.0</Version>
-    <PackageIcon>icon.png</PackageIcon>
-    <LangVersion>11</LangVersion>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageTags>system util helper utility utilities collection collections concurrent concurrency extensions</PackageTags>
-    <Copyright>Copyright © 2023 Christian Borck</Copyright>
-    <Product>CB-Libs</Product>
-    <Company />
-    <Authors>Christian Borck</Authors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\images\icon.png" Pack="true" PackagePath="\">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <InternalsVisibleTo Include="CB.SystemTests" />
   </ItemGroup>
-  <ItemGroup>
+
+  <!-- net48 and netstandard2.0 lack what the newer targets have in the box. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
+
 </Project>

@@ -1,10 +1,8 @@
-﻿using System.IO;
+﻿namespace CB.System.IO;
 
+using global::System.IO;
 
-
-namespace CB.System.IO {
-  public interface IFormatter<TProtoContract> {
-    void Serialize(Stream stream, TProtoContract data);
-    TProtoContract Deserialize(Stream stream);
-  }
+public interface IFormatter<TProtoContract> {
+  public void Serialize(Stream stream, TProtoContract data);
+  public TProtoContract Deserialize(Stream stream);
 }
