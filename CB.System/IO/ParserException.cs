@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using System.Security;
 
 
 
@@ -28,12 +26,6 @@ namespace CB.System.IO {
       int lineIndex,
       Exception innerException)
       : base( CreateMessage( filename, lineIndex ), innerException ) { }
-
-
-
-    [SecuritySafeCritical]
-    protected ParserException(SerializationInfo info, StreamingContext context)
-      : base( info, context ) { }
 
 
 

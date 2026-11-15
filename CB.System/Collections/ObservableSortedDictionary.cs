@@ -29,12 +29,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 
 
 namespace CB.System.Collections {
-  [Serializable]
   public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
     #region constructors
 
@@ -68,11 +66,6 @@ namespace CB.System.Collections {
     }
 
 
-
-    protected ObservableSortedDictionary(SerializationInfo info, StreamingContext context)
-      : base(info, context) {
-      _siInfo = info;
-    }
 
     #endregion public
 
@@ -142,45 +135,9 @@ namespace CB.System.Collections {
 
     #endregion methods
 
-    #region interfaces
-
-    #region ISerializable
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-      if (info == null) {
-        throw new ArgumentNullException("info");
-      }
-
-      if (!_comparer.GetType().IsSerializable) {
-        throw new NotSupportedException("The supplied Comparer is not serializable.");
-      }
-
-      base.GetObjectData(info, context);
-      info.AddValue("_comparer", _comparer);
-    }
-
-    #endregion ISerializable
-
-    #region IDeserializationCallback
-
-    public override void OnDeserialization(object sender) {
-      if (_siInfo != null) {
-        _comparer = (IComparer<DictionaryEntry>)_siInfo.GetValue("_comparer", typeof(IComparer<DictionaryEntry>));
-      }
-
-      base.OnDeserialization(sender);
-    }
-
-    #endregion IDeserializationCallback
-
-    #endregion interfaces
-
     #region fields
 
     private IComparer<DictionaryEntry> _comparer;
-
-    [NonSerialized]
-    private readonly SerializationInfo _siInfo;
 
     #endregion fields
   }

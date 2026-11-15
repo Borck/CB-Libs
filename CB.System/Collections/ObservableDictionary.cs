@@ -33,7 +33,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 
 
 
@@ -44,12 +43,10 @@ namespace CB.System.Collections {
   /// </summary>
   /// <typeparam name="TKey"></typeparam>
   /// <typeparam name="TValue"></typeparam>
-  [Serializable]
   public class ObservableDictionary<TKey, TValue> :
     IDictionary<TKey, TValue>,
     IDictionary,
-    ISerializable,
-    IDeserializationCallback, IReadOnlyDictionary<TKey, TValue> {
+    IReadOnlyDictionary<TKey, TValue> {
     #region fields
 
     protected KeyedDictionaryEntryCollection KeyedEntryCollection;
@@ -58,9 +55,6 @@ namespace CB.System.Collections {
     private readonly Dictionary<TKey, TValue> _dictionaryCache = new Dictionary<TKey, TValue>();
     private int _dictionaryCacheVersion;
     private int _version;
-
-    [NonSerialized]
-    private readonly SerializationInfo _siInfo;
 
     #endregion fields
 
@@ -146,10 +140,6 @@ namespace CB.System.Collections {
     }
 
 
-
-    protected ObservableDictionary(SerializationInfo info, StreamingContext context) {
-      _siInfo = info;
-    }
 
     #endregion constructors
 
@@ -559,35 +549,6 @@ namespace CB.System.Collections {
       return GetEnumerator();
     }
 
-
-
-    public virtual void GetObjectData(SerializationInfo info, StreamingContext context) {
-      if (info == null) {
-        throw new ArgumentNullException(nameof(info));
-      }
-
-      var entries = new Collection<DictionaryEntry>();
-      foreach (var entry in KeyedEntryCollection) {
-        entries.Add(entry);
-      }
-
-      info.AddValue("entries", entries);
-    }
-
-
-
-    public virtual void OnDeserialization(object sender) {
-      if (_siInfo == null) {
-        return;
-      }
-
-      var entries = (Collection<DictionaryEntry>)
-        _siInfo.GetValue("entries", typeof(Collection<DictionaryEntry>));
-      foreach (var entry in entries) {
-        AddEntry((TKey)entry.Key, (TValue)entry.Value);
-      }
-    }
-
     #endregion interfaces
 
     #endregion methods
@@ -626,7 +587,6 @@ namespace CB.System.Collections {
 
     #region Enumerator
 
-    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>, IDictionaryEnumerator {
       #region constructors
