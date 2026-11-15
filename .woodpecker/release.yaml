@@ -33,12 +33,13 @@ variables:
     DOTNET_NOLOGO: 'true'
     DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
     ContinuousIntegrationBuild: 'true'
-    # A step's container is gone after the step; only the workspace volume (/woodpecker) survives. Without this the packages
-    # restored by one step are missing in the next (NETSDK1064).
-    NUGET_PACKAGES: /woodpecker/nuget-packages
   - &publish_when
     - event: deployment
       evaluate: 'CI_PIPELINE_DEPLOY_TARGET == "nuget-org"'
+  # A step's container is gone after the step; only the workspace (the cloned repository and what the steps put into it) is kept.
+  # Packages restored in ~/.nuget/packages by one step are missing in the next (NETSDK1064, MSB3644 for the net48 reference
+  # assemblies), so every step that runs dotnet keeps them in the workspace.
+  - &nuget_cache 'export NUGET_PACKAGES="$PWD/.nuget-packages" && echo "NuGet packages: $NUGET_PACKAGES"'
 
 steps:
   # The tag is the version consumers see; the assemblies and the packages say VersionPrefix. Two numbers for one release is how a
@@ -55,6 +56,7 @@ steps:
     environment:
       <<: *dotnet_env
     commands:
+      - *nuget_cache
       - 'dotnet restore CB-Libs.slnx -p:NuGetAudit=true -p:NuGetAuditLevel=moderate -p:NuGetAuditMode=all "-p:WarningsAsErrors=NU1901%3BNU1902%3BNU1903%3BNU1904"'
 
   - name: build
@@ -62,6 +64,7 @@ steps:
     environment:
       <<: *dotnet_env
     commands:
+      - *nuget_cache
       - . ./.release-env
       - dotnet build CB-Libs.slnx --configuration Release --no-restore -p:VersionSuffix="$RELEASE_SUFFIX"
 
@@ -73,6 +76,7 @@ steps:
       SKIP_TEST_PROJECTS: CB.Win32Tests
       TEST_REPORT: 'false'
     commands:
+      - *nuget_cache
       - bash .woodpecker/scripts/dotnet-runtime.sh
       - bash .woodpecker/scripts/test.sh
 
@@ -81,6 +85,7 @@ steps:
     environment:
       <<: *dotnet_env
     commands:
+      - *nuget_cache
       - . ./.release-env
       - dotnet pack CB-Libs.slnx --configuration Release --no-build --output artifacts -p:VersionSuffix="$RELEASE_SUFFIX"
 
