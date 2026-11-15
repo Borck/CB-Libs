@@ -7,11 +7,12 @@
 # of global.json and the .NET 10 runtime installed. See .woodpecker/README.md. The local backend uses `image` as the shell
 # (Windows PowerShell here; the helper scripts are started with -ExecutionPolicy Bypass so the agent's policy does not matter).
 
+# MANUAL ONLY FOR NOW: there is no Windows agent yet, and a workflow no agent matches stays pending forever (so would pack.yaml,
+# which waits for it). Once an agent is registered, replace this block by the three events of build-linux.yaml:
+#   - event: push, branch: master / - event: pull_request, branch: master / - event: manual
+# Until then the Windows coverage (net48 tests, CB.Win32Tests) comes from the old CI: keep the Windows job of
+# .github/workflows/ci.yml or azure-pipelines.yml switched on.
 when:
-  - event: push
-    branch: master
-  - event: pull_request
-    branch: master # for a pull request: its target branch
   - event: manual
 
 labels:

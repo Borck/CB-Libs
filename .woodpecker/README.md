@@ -9,7 +9,7 @@ file are not workflows.
 | Woodpecker workflow | Replaces | Runs on |
 | --- | --- | --- |
 | `build-linux.yaml` | ci.yml `Build & Test (Linux)`, Azure build/test | Linux agent, Docker backend |
-| `build-windows.yaml` | ci.yml `Build & Test (Windows)`, Azure build/test | Windows agent, local backend |
+| `build-windows.yaml` | ci.yml `Build & Test (Windows)`, Azure build/test | Windows agent, local backend (**manual only until an agent exists**) |
 | `pack.yaml` | ci.yml `Pack the packages`, Azure pack | Linux agent, after both build workflows |
 | `release.yaml` | release.yml `Test & pack`, `Publish to nuget.org`, GitHub release | Linux agent |
 | *(none)* | codeql.yml | stays on GitHub, see [Not migrated](#not-migrated-and-different) |
@@ -22,6 +22,10 @@ file are not workflows.
    deployment, see below); *Cancel previous pipelines* on for `push` and `pull_request` (the `concurrency: cancel-in-progress`
    of ci.yml); *Require approval for* at least the default (forks).
 3. **Agents**
+   - **No Windows agent yet:** `build-windows` runs only when started manually (`when: event: manual`) and `pack` treats it as an
+     optional dependency, so nothing waits for it. Net48 tests and `CB.Win32Tests` then run only in the old CI: keep the Windows
+     job of `ci.yml` or `azure-pipelines.yml` switched on, and keep `Build & Test (Windows)` as a required check, until an agent
+     exists. Then give `build-windows.yaml` the events of `build-linux.yaml` again and make `pack` depend on it (drop `optional`).
    - Linux: any agent with the Docker backend. The workflows ask for `platform=linux/amd64` and `backend=docker`.
    - Windows: your own machine (Woodpecker has no hosted runners and its Docker backend does not run Windows containers). Start the
      agent with `WOODPECKER_BACKEND=local` and `WOODPECKER_AGENT_LABELS=platform=windows/amd64` (the platform label is the default
@@ -155,6 +159,9 @@ existing tag is reused, but there is no reason to take the risk). Then:
 
 1. **Required checks.** Settings -> Branches -> rule of `master`: remove `Build & Test (Linux)`, `Build & Test (Windows)`,
    `Pack the packages` and add the `ci/woodpecker/pr/...` ones. Move the `NUGET_API_KEY` secret (environment `nuget-org`) to Woodpecker.
+   **Windows:** while Woodpecker has no Windows agent, do not switch off the old CI completely: net48 and `CB.Win32Tests` run only
+   there. Keep `azure-pipelines.yml` (it builds and tests on `windows-latest`) or the GitHub `CI` workflow enabled, and keep its
+   Windows check required.
 2. **GitHub Actions**, per workflow so CodeQL stays: *Actions* tab -> workflow `CI` (then `Release`) -> `...` -> *Disable workflow*;
    or `gh workflow disable ci.yml` and `gh workflow disable release.yml`. A disabled workflow keeps its history and can be enabled again.
    (Settings -> Actions -> General -> *Disable actions* switches off all of them, CodeQL included, and the *Actions permissions*

@@ -10,9 +10,12 @@ when:
     branch: master # for a pull request: its target branch
   - event: manual
 
+# build-windows only takes part in manual runs while there is no Windows agent (see there); optional: pack does not wait for a
+# workflow that is not part of the pipeline.
 depends_on:
   - build-linux
-  - build-windows
+  - name: build-windows
+    optional: true
 
 labels:
   platform: linux/amd64
