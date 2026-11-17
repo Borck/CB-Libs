@@ -1,20 +1,24 @@
 # Release. Replaces .github/workflows/release.yml: tests and packs what a tag or a manual run selects, and publishes the CB packages
-# to nuget.org and the GitHub release when somebody deploys the tested pipeline to the target nuget-org.
+# to nuget.org and the GitHub release.
 #
-#   tag v<VersionPrefix>[-<suffix>]   e.g. v1.0.0-preview.2 or v1.0.0. The number must equal VersionPrefix in Directory.Build.props;
-#                                     what follows the first '-' is the prerelease suffix, none means the release version itself.
-#                                     The pipeline tests and packs; it publishes nothing by itself.
+#   tag v<VersionPrefix>[-<suffix>]   e.g. v1.0.0-preview.2 or v1.0.0. Creating a release on GitHub (which creates the tag) or pushing
+#                                     the tag starts it. The number must equal VersionPrefix in Directory.Build.props; what follows
+#                                     the first '-' is the prerelease suffix, none means the release version itself.
+#                                     The pipeline tests, packs, PUBLISHES the packages to nuget.org and attaches them to the
+#                                     GitHub release (created if the tag has none).
 #   manual run                        tests and packs what the selected ref would publish. Variable SUFFIX (default preview.1;
-#                                     empty packs the release version), like the suffix input of workflow_dispatch.
-#   deployment to nuget-org           publishes. In the Woodpecker UI: open the green pipeline of the tag, "Deploy", target nuget-org.
+#                                     empty packs the release version), like the suffix input of workflow_dispatch. Publishes
+#                                     nothing by itself.
+#   deployment to nuget-org           publishes a manual (or tag) pipeline by hand: in the Woodpecker UI open the green pipeline,
+#                                     "Deploy", target nuget-org. Use it to publish a preview from a branch, or to repeat a publish.
 #
-# A published NuGet version cannot be deleted, only unlisted. GitHub's `environment: nuget-org` with required reviewers has no
-# Woodpecker counterpart; the counterpart is the deployment event: nothing leaves without a person with push access pressing
-# Deploy, and the two secrets are enabled for that event only (Settings -> Secrets), so no other pipeline can read them.
-# Needs "Allow deployments" in the repository settings. Secrets:
+# A published NuGet version cannot be deleted, only unlisted. A tag is the release decision: it points at a commit whose CI is
+# green, and the tag version is checked against VersionPrefix before anything is built. Protect the tags (GitHub: rulesets ->
+# tag protection) so that only people who may release can create v* tags, and enable the secrets for the events tag and
+# deployment only (Settings -> Secrets), so no pull request pipeline can read them. Secrets:
 #   nuget_api_key   a nuget.org API key with push rights on the CB.* packages.
 #   github_token    a token with Contents: read and write on this repository, for the GitHub release.
-# A deployment rebuilds the commit; Directory.Build.props makes the build deterministic, so it packs what the tag pipeline packed.
+# "Allow deployments" in the repository settings is only needed for the manual deployment path.
 
 when:
   - event: tag
@@ -33,7 +37,10 @@ variables:
     DOTNET_NOLOGO: 'true'
     DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
     ContinuousIntegrationBuild: 'true'
+  # A tag publishes; so does a deployment to the target nuget-org.
   - &publish_when
+    - event: tag
+      ref: refs/tags/v*
     - event: deployment
       evaluate: 'CI_PIPELINE_DEPLOY_TARGET == "nuget-org"'
   # A step's container is gone after the step; only the workspace (the cloned repository and what the steps put into it) is kept.
@@ -105,7 +112,7 @@ steps:
     commands:
       - bash .woodpecker/scripts/nuget-push.sh
 
-  # Only for a tag (a branch deployment has no release to create).
+  # Only for a tag (a branch deployment has no release to create; the script ends at once without one).
   - name: github-release
     image: *dotnet_image
     when: *publish_when

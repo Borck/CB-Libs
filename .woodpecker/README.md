@@ -12,19 +12,19 @@ file are not workflows.
 | --- | --- | --- |
 | `build-linux.yaml` | ci.yml `Build & Test (Linux)`, Azure build/test | Linux agent, Docker backend |
 | `pack.yaml` | ci.yml `Pack the packages`, Azure pack | Linux agent, after `build-linux` |
-| `release.yaml` | release.yml `Test & pack`, `Publish to nuget.org`, GitHub release | Linux agent |
+| `release.yaml` | release.yml `Test & pack`, `Publish to nuget.org`, GitHub release (on every `v*` tag) | Linux agent |
 | *(none)* | ci.yml `Build & Test (Windows)`, codeql.yml | stay on GitHub, see [Not migrated](#not-migrated-and-different) |
 
 ## Set up
 
 1. **Activate the repository** in the Woodpecker UI (Woodpecker has to be connected to GitHub: OAuth app on the server,
    `WOODPECKER_GITHUB=true`). Leave the pipeline path empty; `.woodpecker/*.yaml` is found by default.
-2. **Repository settings** (Settings -> General): *Allow pull requests* on; *Allow deployments* on (release publishes through a
-   deployment, see below); *Cancel previous pipelines* on for `push` and `pull_request` (the `concurrency: cancel-in-progress`
+2. **Repository settings** (Settings -> General): *Allow pull requests* on; *Allow deployments* on (only for publishing a preview from a
+   branch by hand, see below); *Cancel previous pipelines* on for `push` and `pull_request` (the `concurrency: cancel-in-progress`
    of ci.yml); *Require approval for* at least the default (forks).
 3. **Agent.** Any agent with the Docker backend. The workflows ask for `platform=linux/amd64` and `backend=docker`; an agent that
    carries no labels matches everything, so give it its default labels.
-4. **Secrets** (Settings -> Secrets), only needed for releases. Enable each for the event `deployment` only (not `pull_request`):
+4. **Secrets** (Settings -> Secrets), only needed for releases. Enable each for the events `tag` and `deployment` only (not `pull_request`):
 
    | Secret | Content |
    | --- | --- |
@@ -46,12 +46,14 @@ file are not workflows.
 - **Deterministic builds.** `Directory.Build.props` sets `ContinuousIntegrationBuild` when `CI == 'true'`; Woodpecker sets
   `CI=woodpecker` and a step cannot overwrite it, so every step sets `ContinuousIntegrationBuild: true` itself. (Azure Pipelines
   sets neither, so its packages were never CI builds.)
-- **Release approval.** GitHub's `nuget-org` environment with required reviewers has no counterpart. A tag only tests and packs.
-  Publishing happens when somebody with push access opens the green pipeline of the tag and presses *Deploy* with the target
-  `nuget-org`; the deployment rebuilds the commit (deterministically), pushes the packages with `--skip-duplicate` and creates the
-  GitHub release (notes generated, prerelease when the tag has a suffix). A manual run takes the variable `SUFFIX` like the
-  `workflow_dispatch` input (default `preview.1`, empty packs the release version) and never publishes by itself; to publish a
-  preview from a branch, deploy that manual pipeline.
+- **Release.** Creating a release on GitHub (or pushing a tag `v<VersionPrefix>[-suffix]`) starts `release.yaml`: it checks the tag
+  against `VersionPrefix`, builds, tests, packs, **pushes the packages to nuget.org** (`--skip-duplicate`, symbols included) and
+  attaches them to the GitHub release (created with generated notes if the tag has none; prerelease when the tag has a suffix).
+  GitHub's `nuget-org` environment with required reviewers has no counterpart, so a tag is the release decision: protect `v*` tags
+  (GitHub rulesets) so only people who may release can create them, and enable the secrets for `tag` and `deployment` only.
+  A manual run takes the variable `SUFFIX` like the `workflow_dispatch` input (default `preview.1`, empty packs the release
+  version) and never publishes by itself; to publish a preview from a branch, open that green manual pipeline and press *Deploy*
+  with the target `nuget-org`.
 - **.NET 10 runtime.** `setup-dotnet` installed it next to the SDK; here `scripts/dotnet-runtime.sh` does in the test step. A custom
   image with the runtime baked in (see below) removes the download.
 - **Test results, coverage and packages** are not kept: Woodpecker has no artifact storage, and files only live in the workspace of
@@ -145,7 +147,7 @@ Not in this repository; if IVI-Framework or another project needs it, three ways
 ## Switching the old CI off
 
 Run both for a while: until the Woodpecker statuses are green on a few pull requests, the required checks have been moved, and a
-release rehearsal (a `v1.0.0-preview.N` tag, deployed to `nuget-org`) has worked. While both run, **GitHub's release.yml and
+release rehearsal (a `v1.0.0-preview.N` tag) has worked. While both run, **GitHub's release.yml and
 Woodpecker's release must not both be used for one tag** (`--skip-duplicate` makes a second push harmless, the GitHub release of an
 existing tag is reused, but there is no reason to take the risk). Then:
 
@@ -166,5 +168,5 @@ existing tag is reused, but there is no reason to take the risk). Then:
 ## First run: what to look at
 
 None of this has run on a Woodpecker server yet. Look at: the pull request shows the two `ci/woodpecker/pr/...` statuses; a
-documents-only pull request ends green in each with "Only documents changed"; the `version` step of a preview tag prints the right version; the *Deploy* button offers a target and `publish` sees
+documents-only pull request ends green in each with "Only documents changed"; the `version` step of a preview tag prints the right version; a tag pipeline runs `publish` and `github-release`; the *Deploy* button of a manual pipeline offers a target and `publish` sees
 `CI_PIPELINE_DEPLOY_TARGET`. If the repository's Woodpecker is older than 3.x, check `labels`, `depends_on` and `when` against its docs.

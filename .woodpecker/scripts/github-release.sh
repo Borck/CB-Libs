@@ -10,7 +10,7 @@ if [ -z "${RELEASE_TAG:-}" ]; then
   exit 0
 fi
 if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "Set the github_token secret (Contents: read and write), enabled for the deployment event." >&2
+  echo "Set the github_token secret (Contents: read and write), enabled for the tag and deployment events." >&2
   exit 1
 fi
 

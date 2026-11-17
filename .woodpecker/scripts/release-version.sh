@@ -7,7 +7,7 @@
 #                                     release version itself (Directory.Build.props' default suffix is cleared).
 #   manual run                        variable SUFFIX (default preview.1; empty packs the release version).
 #
-# Publishing is decided here too: only a deployment to the target nuget-org publishes (see release.yaml).
+# Publishing is decided here too: a tag and a deployment to the target nuget-org publish (see release.yaml).
 #
 # The tag is the version consumers see; the assemblies and the packages say VersionPrefix. Two numbers for one release is how a
 # support conversation goes wrong.
@@ -44,7 +44,9 @@ else
 fi
 
 publish=false
-if [ "${CI_PIPELINE_EVENT:-}" = deployment ] && [ "${CI_PIPELINE_DEPLOY_TARGET:-}" = nuget-org ]; then
+if [ "${CI_PIPELINE_EVENT:-}" = tag ] && [ -n "$tag" ]; then
+  publish=true
+elif [ "${CI_PIPELINE_EVENT:-}" = deployment ] && [ "${CI_PIPELINE_DEPLOY_TARGET:-}" = nuget-org ]; then
   publish=true
 fi
 

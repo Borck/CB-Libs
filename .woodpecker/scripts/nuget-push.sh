@@ -5,7 +5,7 @@
 set -eu
 
 if [ -z "${NUGET_API_KEY:-}" ]; then
-  echo "Set the nuget_api_key secret (a nuget.org key with push rights on the CB.* packages), enabled for the deployment event." >&2
+  echo "Set the nuget_api_key secret (a nuget.org key with push rights on the CB.* packages), enabled for the tag and deployment events." >&2
   exit 1
 fi
 
