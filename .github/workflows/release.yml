@@ -5,7 +5,8 @@ name: Release
 #   tag v<VersionPrefix>[-<suffix>]   e.g. v1.0.0-preview.2 or v1.0.0. The number must equal VersionPrefix in
 #                                     Directory.Build.props; what follows the first '-' is the prerelease suffix, none means
 #                                     the release version itself (Directory.Build.props' default suffix is cleared).
-#   manual run                        packs and tests what the selected ref would publish; publishes only if asked to.
+#   manual run                        packs and tests what the selected ref would publish; publishes (and creates the GitHub
+#                                     release v<version>) only if asked to. Empty suffix = the release version.
 #
 # A published NuGet version cannot be deleted, only unlisted, so the publish step runs in the `nuget-org` environment:
 # give that environment required reviewers (Settings -> Environments) and nothing leaves without a person approving it.
@@ -17,9 +18,9 @@ on:
   workflow_dispatch:
     inputs:
       suffix:
-        description: 'Prerelease suffix (e.g. preview.2); empty packs the release version'
+        description: 'Prerelease suffix (e.g. preview.2); leave empty for the release version itself'
         required: false
-        default: 'preview.1'
+        default: ''
       publish:
         description: 'Push the packages to nuget.org (otherwise pack and test only)'
         type: boolean
@@ -158,12 +159,14 @@ jobs:
             dotnet nuget push "$package" --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY"
           done
 
+      # A tag push already has its tag; a manual run creates v<version> on the commit it ran from.
       - name: Create GitHub Release
-        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: v${{ needs.pack.outputs.version }}
+          target_commitish: ${{ github.sha }}
           name: CB-Libs ${{ needs.pack.outputs.version }}
           draft: false
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(needs.pack.outputs.version, '-') }}
           generate_release_notes: true
           files: artifacts/*.*nupkg
